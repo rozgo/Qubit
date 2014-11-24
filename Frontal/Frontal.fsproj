@@ -1,0 +1,812 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
+    <ProjectGuid>{A4677A5B-4CB6-417F-A7DF-AA6501C8D060}</ProjectGuid>
+    <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{F2A71F9B-5D33-465A-A702-920D77279786}</ProjectTypeGuids>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Blue</RootNamespace>
+    <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <OutputPath>bin\iPhoneSimulator\Debug</OutputPath>
+    <DefineConstants>DEBUG;__MOBILE__;__IOS__</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <MtouchDebug>true</MtouchDebug>
+    <MtouchLink>None</MtouchLink>
+    <PlatformTarget>
+    </PlatformTarget>
+    <ConsolePause>false</ConsolePause>
+    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+    <Optimize>false</Optimize>
+    <Tailcalls>false</Tailcalls>
+    <AssemblyName>Frontal</AssemblyName>
+    <MtouchI18n>
+    </MtouchI18n>
+    <MtouchArch>i386</MtouchArch>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Release</OutputPath>
+    <DefineConstants>__MOBILE__;__IOS__</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <PlatformTarget>
+    </PlatformTarget>
+    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+    <ConsolePause>false</ConsolePause>
+    <Tailcalls>true</Tailcalls>
+    <MtouchLink>None</MtouchLink>
+    <AssemblyName>$(Project)</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <OutputPath>bin\iPhone\Debug</OutputPath>
+    <DefineConstants>DEBUG;__MOBILE__;__IOS__</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <CodesignKey>iPhone Developer</CodesignKey>
+    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+    <PlatformTarget>
+    </PlatformTarget>
+    <ConsolePause>false</ConsolePause>
+    <MtouchDebug>true</MtouchDebug>
+    <MtouchI18n>
+    </MtouchI18n>
+    <MtouchArch>ARMv7s</MtouchArch>
+    <IpaPackageName>
+    </IpaPackageName>
+    <MtouchExtraArgs>-v -v -v -aot="nimt-trampolines=65536"</MtouchExtraArgs>
+    <MtouchUseSGen>true</MtouchUseSGen>
+    <Optimize>false</Optimize>
+    <Tailcalls>false</Tailcalls>
+    <MtouchLink>None</MtouchLink>
+    <AssemblyName>Frontal</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhone\Release</OutputPath>
+    <DefineConstants>__MOBILE__;__IOS__</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <PlatformTarget>
+    </PlatformTarget>
+    <CodesignKey>iPhone Developer</CodesignKey>
+    <ConsolePause>false</ConsolePause>
+    <Tailcalls>true</Tailcalls>
+    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+    <AssemblyName>Frontal</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhone\Ad-Hoc</OutputPath>
+    <DefineConstants>__MOBILE__;__IOS__</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <Tailcalls>true</Tailcalls>
+    <ConsolePause>false</ConsolePause>
+    <CodesignKey>iPhone Distribution</CodesignKey>
+    <PlatformTarget>
+    </PlatformTarget>
+    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+    <CodesignProvision>Automatic:AdHoc</CodesignProvision>
+    <BuildIpa>true</BuildIpa>
+    <AssemblyName>Frontal</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhone\AppStore</OutputPath>
+    <DefineConstants>__MOBILE__;__IOS__</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <Tailcalls>true</Tailcalls>
+    <ConsolePause>false</ConsolePause>
+    <CodesignKey>iPhone Distribution</CodesignKey>
+    <PlatformTarget>
+    </PlatformTarget>
+    <CodesignProvision>Automatic:AppStore</CodesignProvision>
+    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+    <AssemblyName>Frontal</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="monotouch" />
+    <Reference Include="OpenTK-1.0" />
+    <Reference Include="FsPickler">
+      <HintPath>..\FsPickler\FsPickler.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
+    <Folder Include="Link\" />
+    <Folder Include="Mario\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Info.plist" />
+    <None Include="Entitlements.plist" />
+    <None Include="GenTest.fsx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="React.fs" />
+    <Compile Include="EAGLView.fs" />
+    <Compile Include="EAGLControl.fs" />
+    <Compile Include="WebFront.fs" />
+    <Compile Include="AppDelegate.fs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets" />
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
+  <ItemGroup>
+    <BundleResource Include="Resources\Default-568h%402x.png" />
+    <BundleResource Include="Shader.vsh" />
+    <BundleResource Include="Shader.fsh" />
+    <BundleResource Include="Resources\Default-Portrait%402x.png" />
+    <BundleResource Include="..\Assets\Link\016ac046.png">
+      <Link>Link\016ac046.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\04f7a8f4.png">
+      <Link>Link\04f7a8f4.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\0f73d9dd.png">
+      <Link>Link\0f73d9dd.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\12627ac6.png">
+      <Link>Link\12627ac6.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\14c36c03.png">
+      <Link>Link\14c36c03.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\1760a511.png">
+      <Link>Link\1760a511.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\1eeaee9f.png">
+      <Link>Link\1eeaee9f.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\29406046.png">
+      <Link>Link\29406046.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\2a955971.png">
+      <Link>Link\2a955971.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\31e69c90.png">
+      <Link>Link\31e69c90.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\34cd3e1a.png">
+      <Link>Link\34cd3e1a.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\3537bd81.png">
+      <Link>Link\3537bd81.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\3cd57ab9.png">
+      <Link>Link\3cd57ab9.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\3fb33897.png">
+      <Link>Link\3fb33897.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\42592364.png">
+      <Link>Link\42592364.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\491b41f4.png">
+      <Link>Link\491b41f4.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\523e116c.png">
+      <Link>Link\523e116c.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\6340bd68.png">
+      <Link>Link\6340bd68.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\759324ad.png">
+      <Link>Link\759324ad.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\7ff8f950.png">
+      <Link>Link\7ff8f950.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\890b6f6b.png">
+      <Link>Link\890b6f6b.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\909f5f59.png">
+      <Link>Link\909f5f59.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\9d48c293.png">
+      <Link>Link\9d48c293.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\9ed5b0b8.png">
+      <Link>Link\9ed5b0b8.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\a2b4d8af.png">
+      <Link>Link\a2b4d8af.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\a536f167.png">
+      <Link>Link\a536f167.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\a90a1e84.png">
+      <Link>Link\a90a1e84.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\ab4ba82a.png">
+      <Link>Link\ab4ba82a.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\ab9206c5.png">
+      <Link>Link\ab9206c5.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\ac45b468.png">
+      <Link>Link\ac45b468.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\aeacf781.png">
+      <Link>Link\aeacf781.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\d542d1b9.png">
+      <Link>Link\d542d1b9.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\da74f625.png">
+      <Link>Link\da74f625.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\dcbaf270.png">
+      <Link>Link\dcbaf270.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\dd7be8be.png">
+      <Link>Link\dd7be8be.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\e11aa3ab.png">
+      <Link>Link\e11aa3ab.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\eae87fc7.png">
+      <Link>Link\eae87fc7.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\f3bfd17f.png">
+      <Link>Link\f3bfd17f.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\f8eddbf6.png">
+      <Link>Link\f8eddbf6.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\016ac046.tris">
+      <Link>Link\016ac046.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\016ac046.uvs">
+      <Link>Link\016ac046.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\016ac046.verts">
+      <Link>Link\016ac046.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\04f7a8f4.tris">
+      <Link>Link\04f7a8f4.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\04f7a8f4.uvs">
+      <Link>Link\04f7a8f4.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\04f7a8f4.verts">
+      <Link>Link\04f7a8f4.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\0f73d9dd.tris">
+      <Link>Link\0f73d9dd.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\0f73d9dd.uvs">
+      <Link>Link\0f73d9dd.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\0f73d9dd.verts">
+      <Link>Link\0f73d9dd.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\12627ac6.tris">
+      <Link>Link\12627ac6.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\12627ac6.uvs">
+      <Link>Link\12627ac6.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\12627ac6.verts">
+      <Link>Link\12627ac6.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\14c36c03.tris">
+      <Link>Link\14c36c03.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\14c36c03.uvs">
+      <Link>Link\14c36c03.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\14c36c03.verts">
+      <Link>Link\14c36c03.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\1760a511.tris">
+      <Link>Link\1760a511.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\1760a511.uvs">
+      <Link>Link\1760a511.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\1760a511.verts">
+      <Link>Link\1760a511.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\1eeaee9f.tris">
+      <Link>Link\1eeaee9f.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\1eeaee9f.uvs">
+      <Link>Link\1eeaee9f.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\1eeaee9f.verts">
+      <Link>Link\1eeaee9f.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\29406046.tris">
+      <Link>Link\29406046.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\29406046.uvs">
+      <Link>Link\29406046.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\29406046.verts">
+      <Link>Link\29406046.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\2a955971.tris">
+      <Link>Link\2a955971.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\2a955971.uvs">
+      <Link>Link\2a955971.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\2a955971.verts">
+      <Link>Link\2a955971.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\31e69c90.tris">
+      <Link>Link\31e69c90.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\31e69c90.uvs">
+      <Link>Link\31e69c90.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\31e69c90.verts">
+      <Link>Link\31e69c90.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\34cd3e1a.tris">
+      <Link>Link\34cd3e1a.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\34cd3e1a.uvs">
+      <Link>Link\34cd3e1a.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\34cd3e1a.verts">
+      <Link>Link\34cd3e1a.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\3537bd81.tris">
+      <Link>Link\3537bd81.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\3537bd81.uvs">
+      <Link>Link\3537bd81.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\3537bd81.verts">
+      <Link>Link\3537bd81.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\3cd57ab9.tris">
+      <Link>Link\3cd57ab9.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\3cd57ab9.uvs">
+      <Link>Link\3cd57ab9.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\3cd57ab9.verts">
+      <Link>Link\3cd57ab9.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\3fb33897.tris">
+      <Link>Link\3fb33897.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\3fb33897.uvs">
+      <Link>Link\3fb33897.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\3fb33897.verts">
+      <Link>Link\3fb33897.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\42592364.tris">
+      <Link>Link\42592364.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\42592364.uvs">
+      <Link>Link\42592364.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\42592364.verts">
+      <Link>Link\42592364.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\491b41f4.tris">
+      <Link>Link\491b41f4.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\491b41f4.uvs">
+      <Link>Link\491b41f4.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\491b41f4.verts">
+      <Link>Link\491b41f4.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\523e116c.tris">
+      <Link>Link\523e116c.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\523e116c.uvs">
+      <Link>Link\523e116c.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\523e116c.verts">
+      <Link>Link\523e116c.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\6340bd68.tris">
+      <Link>Link\6340bd68.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\6340bd68.uvs">
+      <Link>Link\6340bd68.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\6340bd68.verts">
+      <Link>Link\6340bd68.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\759324ad.tris">
+      <Link>Link\759324ad.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\759324ad.uvs">
+      <Link>Link\759324ad.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\759324ad.verts">
+      <Link>Link\759324ad.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\7ff8f950.tris">
+      <Link>Link\7ff8f950.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\7ff8f950.uvs">
+      <Link>Link\7ff8f950.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\7ff8f950.verts">
+      <Link>Link\7ff8f950.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\890b6f6b.tris">
+      <Link>Link\890b6f6b.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\890b6f6b.uvs">
+      <Link>Link\890b6f6b.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\890b6f6b.verts">
+      <Link>Link\890b6f6b.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\909f5f59.tris">
+      <Link>Link\909f5f59.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\909f5f59.uvs">
+      <Link>Link\909f5f59.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\909f5f59.verts">
+      <Link>Link\909f5f59.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\9d48c293.tris">
+      <Link>Link\9d48c293.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\9d48c293.uvs">
+      <Link>Link\9d48c293.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\9d48c293.verts">
+      <Link>Link\9d48c293.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\9ed5b0b8.tris">
+      <Link>Link\9ed5b0b8.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\9ed5b0b8.uvs">
+      <Link>Link\9ed5b0b8.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\9ed5b0b8.verts">
+      <Link>Link\9ed5b0b8.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\a2b4d8af.tris">
+      <Link>Link\a2b4d8af.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\a2b4d8af.uvs">
+      <Link>Link\a2b4d8af.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\a2b4d8af.verts">
+      <Link>Link\a2b4d8af.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\a536f167.tris">
+      <Link>Link\a536f167.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\a536f167.uvs">
+      <Link>Link\a536f167.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\a536f167.verts">
+      <Link>Link\a536f167.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\a90a1e84.tris">
+      <Link>Link\a90a1e84.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\a90a1e84.uvs">
+      <Link>Link\a90a1e84.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\a90a1e84.verts">
+      <Link>Link\a90a1e84.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\ab4ba82a.tris">
+      <Link>Link\ab4ba82a.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\ab4ba82a.uvs">
+      <Link>Link\ab4ba82a.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\ab4ba82a.verts">
+      <Link>Link\ab4ba82a.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\ab9206c5.tris">
+      <Link>Link\ab9206c5.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\ab9206c5.uvs">
+      <Link>Link\ab9206c5.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\ab9206c5.verts">
+      <Link>Link\ab9206c5.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\ac45b468.tris">
+      <Link>Link\ac45b468.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\ac45b468.uvs">
+      <Link>Link\ac45b468.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\ac45b468.verts">
+      <Link>Link\ac45b468.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\aeacf781.tris">
+      <Link>Link\aeacf781.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\aeacf781.uvs">
+      <Link>Link\aeacf781.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\aeacf781.verts">
+      <Link>Link\aeacf781.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\d542d1b9.tris">
+      <Link>Link\d542d1b9.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\d542d1b9.uvs">
+      <Link>Link\d542d1b9.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\d542d1b9.verts">
+      <Link>Link\d542d1b9.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\da74f625.tris">
+      <Link>Link\da74f625.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\da74f625.uvs">
+      <Link>Link\da74f625.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\da74f625.verts">
+      <Link>Link\da74f625.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\dcbaf270.tris">
+      <Link>Link\dcbaf270.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\dcbaf270.uvs">
+      <Link>Link\dcbaf270.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\dcbaf270.verts">
+      <Link>Link\dcbaf270.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\dd7be8be.tris">
+      <Link>Link\dd7be8be.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\dd7be8be.uvs">
+      <Link>Link\dd7be8be.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\dd7be8be.verts">
+      <Link>Link\dd7be8be.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\e11aa3ab.tris">
+      <Link>Link\e11aa3ab.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\e11aa3ab.uvs">
+      <Link>Link\e11aa3ab.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\e11aa3ab.verts">
+      <Link>Link\e11aa3ab.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\eae87fc7.tris">
+      <Link>Link\eae87fc7.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\eae87fc7.uvs">
+      <Link>Link\eae87fc7.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\eae87fc7.verts">
+      <Link>Link\eae87fc7.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\f3bfd17f.tris">
+      <Link>Link\f3bfd17f.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\f3bfd17f.uvs">
+      <Link>Link\f3bfd17f.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\f3bfd17f.verts">
+      <Link>Link\f3bfd17f.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\f8eddbf6.tris">
+      <Link>Link\f8eddbf6.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\f8eddbf6.uvs">
+      <Link>Link\f8eddbf6.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\f8eddbf6.verts">
+      <Link>Link\f8eddbf6.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\names.list">
+      <Link>Link\names.list</Link>
+    </BundleResource>
+    <BundleResource Include="Vybe.vsh" />
+    <BundleResource Include="Vybe.fsh" />
+    <BundleResource Include="..\Assets\Link\016ac046.colors">
+      <Link>Link\016ac046.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\04f7a8f4.colors">
+      <Link>Link\04f7a8f4.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\0f73d9dd.colors">
+      <Link>Link\0f73d9dd.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\12627ac6.colors">
+      <Link>Link\12627ac6.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\14c36c03.colors">
+      <Link>Link\14c36c03.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\1760a511.colors">
+      <Link>Link\1760a511.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\1eeaee9f.colors">
+      <Link>Link\1eeaee9f.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\29406046.colors">
+      <Link>Link\29406046.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\2a955971.colors">
+      <Link>Link\2a955971.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\31e69c90.colors">
+      <Link>Link\31e69c90.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\34cd3e1a.colors">
+      <Link>Link\34cd3e1a.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\3537bd81.colors">
+      <Link>Link\3537bd81.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\3cd57ab9.colors">
+      <Link>Link\3cd57ab9.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\3fb33897.colors">
+      <Link>Link\3fb33897.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\42592364.colors">
+      <Link>Link\42592364.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\491b41f4.colors">
+      <Link>Link\491b41f4.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\523e116c.colors">
+      <Link>Link\523e116c.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\6340bd68.colors">
+      <Link>Link\6340bd68.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\759324ad.colors">
+      <Link>Link\759324ad.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\7ff8f950.colors">
+      <Link>Link\7ff8f950.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\890b6f6b.colors">
+      <Link>Link\890b6f6b.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\909f5f59.colors">
+      <Link>Link\909f5f59.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\9d48c293.colors">
+      <Link>Link\9d48c293.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\9ed5b0b8.colors">
+      <Link>Link\9ed5b0b8.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\a2b4d8af.colors">
+      <Link>Link\a2b4d8af.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\a536f167.colors">
+      <Link>Link\a536f167.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\a90a1e84.colors">
+      <Link>Link\a90a1e84.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\ab4ba82a.colors">
+      <Link>Link\ab4ba82a.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\ab9206c5.colors">
+      <Link>Link\ab9206c5.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\ac45b468.colors">
+      <Link>Link\ac45b468.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\aeacf781.colors">
+      <Link>Link\aeacf781.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\d542d1b9.colors">
+      <Link>Link\d542d1b9.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\da74f625.colors">
+      <Link>Link\da74f625.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\dcbaf270.colors">
+      <Link>Link\dcbaf270.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\dd7be8be.colors">
+      <Link>Link\dd7be8be.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\e11aa3ab.colors">
+      <Link>Link\e11aa3ab.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\eae87fc7.colors">
+      <Link>Link\eae87fc7.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\f3bfd17f.colors">
+      <Link>Link\f3bfd17f.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Link\f8eddbf6.colors">
+      <Link>Link\f8eddbf6.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Mario\FitMario_BodyA.png">
+      <Link>Mario\FitMario_BodyA.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Mario\FitMario_BodyB.png">
+      <Link>Mario\FitMario_BodyB.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Mario\FitMario_EyeDmg.png">
+      <Link>Mario\FitMario_EyeDmg.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Mario\FitMario_Kage.png">
+      <Link>Mario\FitMario_Kage.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Mario\FitMario_BodyA.colors">
+      <Link>Mario\FitMario_BodyA.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Mario\FitMario_BodyA.tris">
+      <Link>Mario\FitMario_BodyA.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Mario\FitMario_BodyA.uvs">
+      <Link>Mario\FitMario_BodyA.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Mario\FitMario_BodyA.verts">
+      <Link>Mario\FitMario_BodyA.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Mario\FitMario_BodyB.colors">
+      <Link>Mario\FitMario_BodyB.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Mario\FitMario_BodyB.tris">
+      <Link>Mario\FitMario_BodyB.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Mario\FitMario_BodyB.uvs">
+      <Link>Mario\FitMario_BodyB.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Mario\FitMario_BodyB.verts">
+      <Link>Mario\FitMario_BodyB.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Mario\FitMario_EyeDmg.colors">
+      <Link>Mario\FitMario_EyeDmg.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Mario\FitMario_EyeDmg.tris">
+      <Link>Mario\FitMario_EyeDmg.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Mario\FitMario_EyeDmg.uvs">
+      <Link>Mario\FitMario_EyeDmg.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Mario\FitMario_EyeDmg.verts">
+      <Link>Mario\FitMario_EyeDmg.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Mario\FitMario_Kage.colors">
+      <Link>Mario\FitMario_Kage.colors</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Mario\FitMario_Kage.tris">
+      <Link>Mario\FitMario_Kage.tris</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Mario\FitMario_Kage.uvs">
+      <Link>Mario\FitMario_Kage.uvs</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Mario\FitMario_Kage.verts">
+      <Link>Mario\FitMario_Kage.verts</Link>
+    </BundleResource>
+    <BundleResource Include="..\Assets\Mario\names.list">
+      <Link>Mario\names.list</Link>
+    </BundleResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Cortex\Cortex.fsproj">
+      <Project>{BA48A05D-EFDB-499A-ADD6-CEC499C0C6E2}</Project>
+      <Name>Cortex</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>
