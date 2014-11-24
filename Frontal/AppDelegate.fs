@@ -33,7 +33,7 @@ type AppDelegate () =
         //window.BackgroundColor <- UIColor.FromRGB(1.0f,0.0f,0.0f)
         window.MakeKeyAndVisible ()
         //React.Test
-        React.AsyncTest
+        //React.AsyncTest
         true
 
 module Main =

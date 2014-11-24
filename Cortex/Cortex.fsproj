@@ -39,7 +39,7 @@
     <Reference Include="System.Numerics" />
     <Reference Include="System.Xml" />
     <Reference Include="FsPickler">
-      <HintPath>..\FsPickler\FsPickler.dll</HintPath>
+      <HintPath>..\Libs\FsPickler.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
