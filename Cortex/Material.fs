@@ -2,17 +2,7 @@
 
 open System
 open System.IO
-open System.Collections.Generic
-open System.Linq
-
 open OpenTK
-open OpenTK.Graphics.ES20
-open OpenTK.Platform.iPhoneOS
-open MonoTouch.Foundation
-open MonoTouch.CoreAnimation
-open MonoTouch.ObjCRuntime
-open MonoTouch.OpenGLES
-open MonoTouch.UIKit
 open System.Drawing
 
 open Nessos.FsPickler
@@ -72,3 +62,11 @@ let test () =
     printfn "YAML: %A" mp
     //printfn "YAML: %A" json
     ignore
+
+
+let m =
+    {
+        blend = Some (Blend (SrcAlpha, OneMinusSrcAlpha))
+        vert = VertShader "unified.vsh"
+        frag = FragShader "unified.fsh"
+    }

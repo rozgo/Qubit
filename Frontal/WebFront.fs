@@ -5,7 +5,7 @@ open System.Collections.Generic
 open System.Linq
 
 open OpenTK
-open OpenTK.Graphics.ES20
+open OpenTK.Graphics.ES30
 open OpenTK.Platform.iPhoneOS
 open MonoTouch.Foundation
 open MonoTouch.CoreAnimation

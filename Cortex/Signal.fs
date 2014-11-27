@@ -1,4 +1,4 @@
-﻿module Cortex.Generators
+﻿module Cortex.Signal
 
 open System
 open OpenTK
@@ -77,6 +77,7 @@ module Wave =
 
         member this.Wave = wave
         member this.AsObservable = source.AsObservable
+
 
 module Touch =
 

@@ -4,7 +4,7 @@ open System
 open MonoTouch.UIKit
 open MonoTouch.Foundation
 
-type AppControl (frame:Drawing.RectangleF, eagl:EAGLControl, web:WebFrontControl) as this =
+type AppControl (frame:Drawing.RectangleF, eagl:QGLController, web:WebFrontControl) as this =
     inherit UIViewController ()
 
     do
@@ -23,7 +23,7 @@ type AppDelegate () =
 
     let window = new UIWindow (UIScreen.MainScreen.Bounds)
 
-    let eaglControl = new EAGLControl (window.Frame)
+    let eaglControl = new QGLController (window.Frame)
     let webControl = new WebFrontControl (window.Frame)
     let appControl = new AppControl (window.Frame, eaglControl, webControl)
 
@@ -32,7 +32,7 @@ type AppDelegate () =
         //window.Add eaglControl.View
         //window.BackgroundColor <- UIColor.FromRGB(1.0f,0.0f,0.0f)
         window.MakeKeyAndVisible ()
-        //React.Test
+        React.Test
         //React.AsyncTest
         true
 

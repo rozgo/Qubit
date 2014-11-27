@@ -1,9 +1,9 @@
-﻿module AssetServer.AssemblyInfo
+﻿module AssetServerCLI.AssemblyInfo
 
 open System.Reflection
 open System.Runtime.CompilerServices
 
-[<AssemblyTitle("AssetServer")>]
+[<AssemblyTitle("AssetServerCLI")>]
 [<AssemblyDescription("")>]
 [<AssemblyConfiguration("")>]
 [<AssemblyCompany("")>]

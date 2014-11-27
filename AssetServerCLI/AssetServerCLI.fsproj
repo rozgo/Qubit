@@ -2,13 +2,13 @@
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
-    <ProjectGuid>{536BF65F-01A0-4298-AB72-1F6E7EDE9FEA}</ProjectGuid>
+    <Platform Condition=" '$(Platform)' == '' ">iPhone</Platform>
+    <ProjectGuid>{61444696-C4E2-4B14-A302-A78020A5680D}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>AssetServer</RootNamespace>
-    <AssemblyName>AssetServer</AssemblyName>
+    <RootNamespace>AssetServerCLI</RootNamespace>
+    <AssemblyName>AssetServerCLI</AssemblyName>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -18,7 +18,7 @@
     <Externalconsole>true</Externalconsole>
     <Tailcalls>false</Tailcalls>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugSymbols>false</DebugSymbols>
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>

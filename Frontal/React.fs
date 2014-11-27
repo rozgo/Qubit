@@ -3,74 +3,15 @@
 open System
 open System.Threading
 open System.Net
-open Cortex.Generators
+open Cortex.Signal
+
 
 open Nessos.FsPickler
-open Nessos.FsPickler.Combinators
+//open Nessos.FsPickler.Combinators
 
-//let guard f (e:IObservable<'Args>) =  
-//  { new IObservable<'Args> with  
-//      member x.Subscribe(observer) =  
-//        let rm = e.Subscribe(observer) in f(); rm }
-//
-//let ofSeq s = 
-//    let evt = new Event<_>()
-//    evt.Publish |> guard (fun o ->for n in s do evt.Trigger(n))
-
-let createTimer timerInterval =
-
-    let timer = new System.Timers.Timer(float timerInterval)
-    timer.AutoReset <- true
-
-    let observable = timer.Elapsed
-
-    let task = async {
-        timer.Start()
-        do! Async.Sleep 5000
-        timer.Stop()
-        }
-    (task, observable)
-
-let AsyncHttp(url:string) =
-    async {  let req = WebRequest.Create(url)
-             let! rsp = req.AsyncGetResponse ()
-             use stream = rsp.GetResponseStream ()
-             use reader = new System.IO.StreamReader (stream)
-             return reader.ReadToEnd () }
-
-let workThenWait() = 
-  Thread.Sleep(1000)
-  printfn "work done"
-  async { do! Async.Sleep(1000) }
-
-let demo() = 
-  let work = workThenWait() |> Async.StartAsTask
-  printfn "started"
-  work.Wait()
-  printfn "completed"
+open FSharp.Control.Reactive
 
 let Test = 
-//    let basicHandler _ = printfn "tick %A" DateTime.Now
-
-//    let basicTimer, timerEventStream = createTimer 1000
-//
-//    timerEventStream
-//    |> Observable.scan (fun count _ -> count + 1) 0
-//    |> Observable.subscribe (fun count -> printfn "timer ticked with count %i" count)
-//    |> ignore
-
-//    let o1 = seq { for i in [-10..0] -> i } |> ofSeq
-//
-//    let o2 = seq { for i in [0..10] -> i } |> ofSeq
-//
-//
-//    Observable.merge o1 o2
-//    |> Observable.filter (fun n -> n%2 = 0)
-//    |> Observable.add (printfn "ofSeq %d")
-
-    let s = AsyncHttp "http://brink-dev.beyondgames.io/t" |> Async.StartAsTask
-    //let s = workThenWait |> Async.StartAsTask
-    printfn "http %s" s.Result
 
     let cFreq = Constant.Float 0.1
     let cPhase = Constant.Float 0.
@@ -83,6 +24,8 @@ let Test =
                 cAmplitude.AsObservable,
                 cOffset.AsObservable,
                 false, Time.TotalTime.AsObservable)
+
+
     osc.AsObservable |> Observable.add (printfn "sample %f")
 //    osc.AsObservable |> Observable.add ignore
 
@@ -104,27 +47,24 @@ let Test =
 
     Observable.merge finger0Moved finger1Moved
     |> Observable.pairwise
-//    |> Observable.scan
     |> Observable.add (printfn "%A")
-//
-//    finger0 |> Observable.add (printfn "finger0 %A")
 
-//    Async.RunSynchronously (async { do! Async.Sleep(15000) })
-//    printfn "done waiting"
-//    cAmplitude.Next 0.0
+    let observe = new Builders.ObservableBuilder ()
 
-//    dt |> Observable.wave.Sample
+    let rec generate x =
+        observe {
+            yield x
+            if x < 1 then
+                yield! generate (x + 1) }
+    generate 5
+    |> Observable.add (printfn "Rx: %A")
 
-    //let basicTimer1 = createTimer 1000 basicHandler
-
-//    Async.RunSynchronously basicTimer
-
+//    |> Observable.subscribeWithCallbacks ignore ignore ignore
+//    |> ignore
 
 
-  
-let AsyncTest =
-    let a = async {
-        do! Async.Sleep 5000
-    }
+
+
+let Test2 =
 
     ()

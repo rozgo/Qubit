@@ -1,9 +1,8 @@
 ﻿namespace Cortex.Shaders
 
 open System
-open System.Runtime.InteropServices
 open OpenTK
-open OpenTK.Graphics.ES20
+open OpenTK.Graphics.ES30
 open MonoTouch.Foundation
 open Cortex.Renderer
 

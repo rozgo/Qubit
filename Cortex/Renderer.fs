@@ -2,7 +2,7 @@
 
 open System
 open OpenTK
-open OpenTK.Graphics.ES20
+open OpenTK.Graphics.ES30
 open MonoTouch.Foundation
 
 module Renderer =
