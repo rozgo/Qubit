@@ -50,6 +50,9 @@
     <Reference Include="System.Reactive.Linq">
       <HintPath>..\Libs\System.Reactive.Linq.dll</HintPath>
     </Reference>
+    <Reference Include="websocket-sharp">
+      <HintPath>..\Libs\websocket-sharp.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
@@ -58,8 +61,10 @@
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
     <Compile Include="Observable.fs" />
+    <Compile Include="Signal.fs" />
     <Compile Include="Asset.fs" />
     <Compile Include="Renderer.fs" />
+    <Compile Include="Texture.fs" />
     <Compile Include="Shaders.fs" />
     <Compile Include="Meshes.fs" />
     <Compile Include="Scene.fs" />
@@ -67,7 +72,5 @@
     <Compile Include="Utils.fs" />
     <Compile Include="Material.fs" />
     <Compile Include="What.fs" />
-    <Compile Include="Texture.fs" />
-    <Compile Include="Signal.fs" />
   </ItemGroup>
 </Project>

@@ -2,6 +2,7 @@
 
 open System
 open System.IO
+open System.Threading
 open MonoTouch.UIKit
 open OpenTK
 open MonoTouch.OpenGLES
@@ -37,12 +38,18 @@ type QGLController =
     override this.ViewDidLoad () =
         base.ViewDidLoad ()
 
+        Asset.mainContext <- SynchronizationContext.Current
+
         this.context <- new EAGLContext (EAGLRenderingAPI.OpenGLES3)
+        this.context.IsMultiThreaded <- true
         let view = this.View :?> GLKView
         view.Context <- this.context
         view.DrawableDepthFormat <- GLKViewDrawableDepthFormat.Format24
         view.DrawInRect.Add (this.Draw)
         this.Setup ()
+
+        Async.Start Asset.watch
+
 
     member this.Setup () =
 

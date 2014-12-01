@@ -2,9 +2,14 @@
 
 open System
 open System.Collections.Generic
+open System.Threading
 open System.IO
 open System.Net
+//open System.Net.WebSockets
 open Cortex.Observable
+
+open WebSocketSharp
+open WebSocketSharp.Server
 
 module private __ =
 
@@ -32,35 +37,47 @@ module private __ =
             sources.[asset] <- obs
             obs
 
+    let requestQueue = new List<WebRequest> ()
+
+    let baseUrl = "http://192.168.3.139:8080/"
+//    let baseUrl = "http://localhost:8080/"
+
 open __
 
-let requestQueue = new List<WebRequest> ()
+let mutable mainContext : SynchronizationContext = null
 
 let request asset = async {
     printfn "Request %A" asset
-//    let request = HttpWebRequest.Create ("http://localhost:8080/" + asset)
-    let request = HttpWebRequest.Create ("http://192.168.0.177:8080/" + asset)
+    let request = HttpWebRequest.Create (baseUrl + asset)
     let! response = request.AsyncGetResponse ()
     let stream = response.GetResponseStream ()
     let length = (int response.ContentLength)
     let! buffer = readToEnd stream
-    printfn "length reported: %A  length read: %A" length buffer.Length
     return buffer }
 
-let mutable sleeper = 4000
-
 let fetch asset = async {
-    sleeper <- sleeper + 2000
-    let sleeper = sleeper
-    let request = HttpWebRequest.Create ("http://192.168.0.177:8080/" + asset)
+    printfn "Fetch %A" asset
+    let request = HttpWebRequest.Create (baseUrl + asset)
     let! response = request.AsyncGetResponse ()
     let stream = response.GetResponseStream ()
     let length = (int response.ContentLength)
     let! buffer = readToEnd stream
-//    let r = 2000 + (int ((new Random ()).NextDouble () * 3000.0))
-    do! Async.Sleep sleeper
+    do! Async.SwitchToContext mainContext
     (getSource asset).Next buffer }
 
 let AsObservable asset =
     Async.Start (fetch asset)
     (getSource asset).AsObservable
+
+let watch = async {
+    let ws = new WebSocket ("ws://192.168.3.139:8081/asset")
+    ws.OnMessage
+    |> Observable.add (fun (msg) ->
+        printfn "WS Client: %A" msg.Data
+        let m = String.Copy msg.Data
+        Async.Start (fetch m))
+    |> ignore
+    ws.ConnectAsync ()
+    while ws.IsAlive do
+        ws.Ping () |> ignore
+        do! Async.Sleep 30000 }
