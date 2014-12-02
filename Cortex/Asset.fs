@@ -5,11 +5,9 @@ open System.Collections.Generic
 open System.Threading
 open System.IO
 open System.Net
-//open System.Net.WebSockets
 open Cortex.Observable
 
 open WebSocketSharp
-open WebSocketSharp.Server
 
 module private __ =
 
@@ -39,8 +37,8 @@ module private __ =
 
     let requestQueue = new List<WebRequest> ()
 
-    let baseUrl = "http://192.168.3.139:8080/"
-//    let baseUrl = "http://localhost:8080/"
+//    let baseUrl = "http://192.168.3.139:8080/"
+    let baseUrl = "http://localhost:8080/"
 
 open __
 
@@ -70,7 +68,7 @@ let AsObservable asset =
     (getSource asset).AsObservable
 
 let watch = async {
-    let ws = new WebSocket ("ws://192.168.3.139:8081/asset")
+    let ws = new WebSocket ("ws://localhost:8081/asset")
     ws.OnMessage
     |> Observable.add (fun (msg) ->
         printfn "WS Client: %A" msg.Data

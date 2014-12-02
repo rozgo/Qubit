@@ -11,6 +11,18 @@ open WebSocketSharp.Server
 
 open System.Diagnostics
 
+open FSharp.Control.Reactive
+
+#nowarn "40"
+type Microsoft.FSharp.Control.Async with
+  static member AwaitObservable (evt : IObservable<'a>) =
+    Async.FromContinuations (fun (cont, econt, ccont) ->
+        let rec callback value =
+            sub.Dispose ()
+            cont value
+        and sub : IDisposable = evt.Subscribe callback
+        ())
+
 let httpListener assetPath (handler:(string -> HttpListenerRequest -> HttpListenerResponse -> Async<unit>)) =
     let hl = new HttpListener()
     hl.Prefixes.Add "http://*:8080/"
@@ -61,7 +73,7 @@ type WebSocketAsset =
     override this.OnMessage (e:MessageEventArgs) = printfn "WebSocket Message %A" e
 
 let webSocketServer fileObserver =
-    let ws = new WebSocketServer ("ws://192.168.3.139:8081")
+    let ws = new WebSocketServer ("ws://localhost:8081")
     ws.KeepClean <- false
     ws.AddWebSocketService<WebSocketAsset> ("/asset", fun () -> new WebSocketAsset (fileObserver) )
     ws.Start ()
@@ -86,6 +98,13 @@ let main argv =
     |> Observable.subscribe (fun msg -> printfn "Proc: %A" msg)
     |> ignore
 
+    async {
+        while true do
+            printfn "waiting for file change"
+            let! fileChanged = Async.AwaitObservable fileObserver
+            printfn "fileChanged: %A" fileChanged
+        } |> Async.Start
+
     proc.BeginOutputReadLine ()
 
     httpListener assetPath httpHandler
@@ -94,6 +113,6 @@ let main argv =
     printfn "Press return to exit..."
     Console.ReadLine () |> ignore
 
-    proc.Close ()
+    proc.Kill ()
     0
 
