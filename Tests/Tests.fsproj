@@ -1,28 +1,29 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{BA48A05D-EFDB-499A-ADD6-CEC499C0C6E2}</ProjectGuid>
-    <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{F2A71F9B-5D33-465A-A702-920D77279786}</ProjectTypeGuids>
+    <ProjectGuid>{89624072-6DEB-47EA-84CD-73206F92FC0D}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Cortex</RootNamespace>
-    <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
-    <AssemblyName>Cortex</AssemblyName>
+    <RootNamespace>Tests</RootNamespace>
+    <AssemblyName>Tests</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
     <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
+    <ConsolePause>false</ConsolePause>
+    <Tailcalls>false</Tailcalls>
     <PlatformTarget>
     </PlatformTarget>
-    <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
@@ -32,17 +33,19 @@
     <Tailcalls>true</Tailcalls>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="FSharp.Core" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="monotouch" />
-    <Reference Include="OpenTK-1.0" />
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Xml" />
+    <Reference Include="nunit.framework" />
+    <Reference Include="FSharp.Control.Reactive">
+      <HintPath>..\Libs\FSharp.Control.Reactive.dll</HintPath>
+    </Reference>
     <Reference Include="FsPickler">
       <HintPath>..\Libs\FsPickler.dll</HintPath>
     </Reference>
-    <Reference Include="FSharp.Control.Reactive">
-      <HintPath>..\Libs\FSharp.Control.Reactive.dll</HintPath>
+    <Reference Include="System.Reactive.Core">
+      <HintPath>..\Libs\System.Reactive.Core.dll</HintPath>
     </Reference>
     <Reference Include="System.Reactive.Interfaces">
       <HintPath>..\Libs\System.Reactive.Interfaces.dll</HintPath>
@@ -55,22 +58,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Resources\" />
+    <Compile Include="SignalTests.fs" />
+    <Compile Include="AtomTests.fs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.1\Framework\v4.0\Microsoft.FSharp.Targets" />
-  <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="Observable.fs" />
-    <Compile Include="Asset.fs" />
-    <Compile Include="Renderer.fs" />
-    <Compile Include="Texture.fs" />
-    <Compile Include="Shaders.fs" />
-    <Compile Include="Meshes.fs" />
-    <Compile Include="Scene.fs" />
-    <Compile Include="IO.fs" />
-    <Compile Include="Utils.fs" />
-    <Compile Include="Material.fs" />
-    <Compile Include="What.fs" />
-    <Compile Include="Generators.fs" />
+    <ProjectReference Include="..\Signal\Signal.fsproj">
+      <Project>{79DEC74E-FD46-43A2-ABE5-E796293DCD2C}</Project>
+      <Name>Signal</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Atom\Atom.fsproj">
+      <Project>{A5543105-1977-4323-8A9E-96A1CFE64869}</Project>
+      <Name>Atom</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

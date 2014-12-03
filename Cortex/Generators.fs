@@ -31,6 +31,9 @@ module Time =
                 TotalTime.Next (time)
                 DeltaTime.Next (time - lastTime)
 
+
+        
+
 module Wave =
 
     type Form =

@@ -14,14 +14,22 @@ open System.Diagnostics
 open FSharp.Control.Reactive
 
 #nowarn "40"
-type Microsoft.FSharp.Control.Async with
-  static member AwaitObservable (evt : IObservable<'a>) =
-    Async.FromContinuations (fun (cont, econt, ccont) ->
-        let rec callback value =
-            sub.Dispose ()
-            cont value
-        and sub : IDisposable = evt.Subscribe callback
-        ())
+let synchronize f = 
+  let ctx = System.Threading.SynchronizationContext.Current 
+  f (fun g arg ->
+    let nctx = System.Threading.SynchronizationContext.Current 
+    if ctx <> null && ctx <> nctx then ctx.Post((fun _ -> g(arg)), null)
+    else g(arg) )
+
+type Microsoft.FSharp.Control.Async with 
+  static member AwaitObservable(evt:IObservable<'a>) =
+    synchronize (fun f ->
+      Async.FromContinuations((fun (cont,econt,ccont) -> 
+        let rec callback = (fun value ->
+          remover.Dispose()
+          f cont value )
+        and remover : IDisposable  = evt.Subscribe(callback) 
+        () )))
 
 let httpListener assetPath (handler:(string -> HttpListenerRequest -> HttpListenerResponse -> Async<unit>)) =
     let hl = new HttpListener()
