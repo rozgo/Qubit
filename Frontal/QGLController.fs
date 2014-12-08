@@ -3,15 +3,16 @@
 open System
 open System.IO
 open System.Threading
+open System.Drawing
 open MonoTouch.UIKit
 open OpenTK
+open MonoTouch
 open MonoTouch.OpenGLES
 open MonoTouch.GLKit
-open MonoTouch
-open OpenTK.Graphics.ES30
 open MonoTouch.CoreGraphics
-open System.Drawing
 open MonoTouch.Foundation
+open OpenTK.Graphics.ES30
+open Cortex.Generator
 
 type Actor =
     {
@@ -25,6 +26,8 @@ type QGLController =
     val mutable context : EAGLContext
     val mutable shader : Shaders.Vybe.Program option
     val mutable actors : Actor list
+    val mutable fingers : int array
+
 
     new (frame) = //as this =
         {
@@ -33,6 +36,7 @@ type QGLController =
         context = null
         shader = None
         actors = List.empty
+        fingers = [| 0; 0; 0; 0; 0; |]
         }
 
     override this.ViewDidLoad () =
@@ -48,7 +52,11 @@ type QGLController =
         view.DrawInRect.Add (this.Draw)
         this.Setup ()
 
+        this.View.MultipleTouchEnabled <- true
+
         Async.Start Asset.watch
+
+        Touch.Touches |> Observable.add (printfn "%A")
 
 
     member this.Setup () =
@@ -134,3 +142,52 @@ type QGLController =
 //        let m = Material.test ()
     
         this.shader <- Some (Shaders.Vybe.Program ())
+
+
+    override this.Dispose disposing =
+        base.Dispose disposing
+        NSNotificationCenter.DefaultCenter.RemoveObserver (this)
+
+    override this.DidReceiveMemoryWarning () =
+        base.DidReceiveMemoryWarning ()
+
+//    override this.ViewWillAppear animated =
+//        base.ViewWillAppear animated
+//        eaglView.StartAnimating
+//
+//    override this.ViewWillDisappear animated =
+//        base.ViewWillDisappear animated
+//        eaglView.StopAnimating
+
+    member this.PushTouches (touches:UITouch[]) phase =
+        let fs = Seq.ofArray this.fingers
+        for touch in touches do
+            let mutable fingerIdx = -1
+            if phase = Touch.Began then
+                fingerIdx <- Seq.findIndex (fun i -> i = 0) fs
+                this.fingers.[fingerIdx] <- touch.Handle.GetHashCode ()
+            else
+                fingerIdx <- Seq.findIndex (fun i -> i = touch.Handle.GetHashCode ()) fs
+                if phase = Touch.Ended || phase = Touch.Cancelled then
+                    this.fingers.[fingerIdx] <- 0
+            let loc = touch.LocationInView this.View
+            Touch.Generator.Trigger {
+                finger = Touch.Finger fingerIdx
+                phase = phase
+                position = Vector3 (loc.X, loc.Y, 0.0f) }
+
+    override this.TouchesBegan (touches, evt) =
+        base.TouchesBegan (touches, evt)
+        this.PushTouches (touches.ToArray<UITouch>()) Touch.Began
+
+    override this.TouchesMoved (touches, evt) =
+        base.TouchesMoved (touches, evt)
+        this.PushTouches (touches.ToArray<UITouch>()) Touch.Moved
+
+    override this.TouchesEnded (touches, evt) =
+        base.TouchesEnded (touches, evt)
+        this.PushTouches (touches.ToArray<UITouch>()) Touch.Ended
+
+    override this.TouchesCancelled (touches, evt) =
+        base.TouchesCancelled (touches, evt)
+        this.PushTouches (touches.ToArray<UITouch>()) Touch.Cancelled

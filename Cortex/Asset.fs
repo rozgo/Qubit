@@ -69,6 +69,7 @@ let AsObservable asset =
 
 let watch = async {
     let ws = new WebSocket ("ws://localhost:8081/asset")
+//    let ws = new WebSocket ("ws://192.168.3.139:8081/asset")
     ws.OnMessage
     |> Observable.add (fun (msg) ->
         printfn "WS Client: %A" msg.Data

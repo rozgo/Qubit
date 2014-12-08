@@ -71,6 +71,6 @@
     <Compile Include="Utils.fs" />
     <Compile Include="Material.fs" />
     <Compile Include="What.fs" />
-    <Compile Include="Generators.fs" />
+    <Compile Include="Generator.fs" />
   </ItemGroup>
 </Project>

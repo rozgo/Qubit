@@ -6,16 +6,26 @@ open System.Reactive
 open System.Reactive.Linq
 
 #nowarn "40"
+type Microsoft.FSharp.Control.Async with 
+  static member AwaitObservable (obs : IObservable<'T>) =
+    let timeReceived = new Event<'T>()
+    let rec trigger t =
+      timeReceived.Trigger t
+      sub.Dispose ()
+    and sub : IDisposable = obs.Subscribe<'T> (trigger)
+    Async.AwaitEvent (timeReceived.Publish)
 
-type Microsoft.FSharp.Control.Async with
-  static member AwaitObservable (evt : IObservable<'a>) =
-    Async.FromContinuations (fun (cont, econt, ccont) ->
-        let rec callback value =
-            async {
-                sub.Dispose ()
-                cont value } |> Async.Start
-        and sub : IDisposable = evt.Subscribe callback
-        ())
+//#nowarn "40"
+//
+//type Microsoft.FSharp.Control.Async with
+//  static member AwaitObservable (evt : IObservable<'a>) =
+//    Async.FromContinuations (fun (cont, econt, ccont) ->
+//        let rec callback value =
+//            async {
+//                sub.Dispose ()
+//                cont value } |> Async.Start
+//        and sub : IDisposable = evt.Subscribe callback
+//        ())
 
 //type Microsoft.FSharp.Control.Async with
 //  static member StartDisposable (op:Async<unit>, ?cts : CancellationTokenSource) =

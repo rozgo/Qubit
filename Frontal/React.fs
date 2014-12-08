@@ -3,7 +3,7 @@
 open System
 open System.Threading
 open System.Net
-open Cortex.Signal
+open Cortex.Generator
 
 
 open Nessos.FsPickler
@@ -37,10 +37,10 @@ let Test =
 
     printfn "bytes %i unpickle %A" bytes.Length up
 
-    //Touch.Touches.AsObservable |> Observable.add (printfn "%A")
+    Touch.Touches |> Observable.add (printfn "%A")
 
-    let finger0 = Touch.Touches.AsObservable |> Observable.filter (fun t -> if t.finger = Touch.Finger 0 then true else false)
-    let finger1 = Touch.Touches.AsObservable |> Observable.filter (fun t -> if t.finger = Touch.Finger 1 then true else false)
+    let finger0 = Touch.Touches |> Observable.filter (fun t -> if t.finger = Touch.Finger 0 then true else false)
+    let finger1 = Touch.Touches |> Observable.filter (fun t -> if t.finger = Touch.Finger 1 then true else false)
 
     let finger0Moved = finger0 |> Observable.filter (fun t -> t.phase = Touch.Moved)
     let finger1Moved = finger1 |> Observable.filter (fun t -> t.phase = Touch.Moved)

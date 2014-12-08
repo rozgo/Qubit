@@ -62,6 +62,7 @@ type WebSocketAsset =
     override this.OnMessage (e:MessageEventArgs) = printfn "WebSocket Message %A" e
 
 let webSocketServer fileObserver =
+//    let ws = new WebSocketServer ("ws://192.168.3.139:8081")
     let ws = new WebSocketServer ("ws://localhost:8081")
     ws.KeepClean <- false
     ws.AddWebSocketService<WebSocketAsset> ("/asset", fun () -> new WebSocketAsset (fileObserver) )
@@ -86,13 +87,6 @@ let main argv =
     fileObserver
     |> Observable.subscribe (fun msg -> printfn "Proc: %A" msg)
     |> ignore
-
-    async {
-        while true do
-            printfn "waiting for file change"
-            let! fileChanged = Async.AwaitObservable fileObserver
-            printfn "fileChanged: %A" fileChanged
-        } |> Async.Start
 
     proc.BeginOutputReadLine ()
 

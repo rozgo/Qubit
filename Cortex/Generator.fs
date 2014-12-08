@@ -1,4 +1,4 @@
-﻿module Cortex.Signal
+﻿module Cortex.Generator
 
 open System
 open OpenTK
@@ -95,7 +95,8 @@ module Touch =
         position : Vector3
         }
 
-    let Touches = ObservableSource<Touch> ()
+    let Generator = new Event<Touch> ()
+    let Touches = Generator.Publish
 
 
 
