@@ -1,36 +1,37 @@
 ﻿module Atom.Async
 
 open System
+open System.Threading
 open System.Reactive
 open System.Reactive.Linq
 
 #nowarn "40"
 
-let synchronize f = 
-  let ctx = System.Threading.SynchronizationContext.Current 
-  f (fun g arg ->
-    let nctx = System.Threading.SynchronizationContext.Current 
-    if ctx <> null && ctx <> nctx then ctx.Post((fun _ -> g(arg)), null)
-    else g(arg) )
+type Microsoft.FSharp.Control.Async with
+  static member AwaitObservable (evt : IObservable<'a>) =
+    Async.FromContinuations (fun (cont, econt, ccont) ->
+        let rec callback value =
+            async {
+                sub.Dispose ()
+                cont value } |> Async.Start
+        and sub : IDisposable = evt.Subscribe callback
+        ())
 
-type Microsoft.FSharp.Control.Async with 
-  static member AwaitObservable(evt:IObservable<'a>) =
-    synchronize (fun f ->
-      Async.FromContinuations((fun (cont,econt,ccont) -> 
-        let rec callback = (fun value ->
-          remover.Dispose()
-          f cont value )
-        and remover : IDisposable  = evt.Subscribe(callback) 
-        () )))
+//type Microsoft.FSharp.Control.Async with
+//  static member StartDisposable (op:Async<unit>, ?cts : CancellationTokenSource) =
+//    let cts = defaultArg cts (new CancellationTokenSource ())
+//    Async.Start(op, cts.Token)
+//    { new IDisposable with 
+//        member x.Dispose() = cts.Cancel() }
 
-type System.Reactive.Linq.Observable with 
-  static member FromAsync computation = 
+type System.Reactive.Linq.Observable with
+  static member FromAsync (computation, ?cts : CancellationTokenSource) = 
       Observable.Create<'a> (Func<IObserver<'a>, Action>(fun o ->
         if o = null then nullArg "observer"
-        let cts = new System.Threading.CancellationTokenSource ()
+        let cts = defaultArg cts (new CancellationTokenSource ())
         let invoked = ref 0
         let cancelOrDispose cancel =
-          if Threading.Interlocked.CompareExchange (invoked, 1, 0) = 0 then
+          if Interlocked.CompareExchange (invoked, 1, 0) = 0 then
             if cancel then cts.Cancel () else cts.Dispose ()
         let wrapper = async {
           try

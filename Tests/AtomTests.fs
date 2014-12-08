@@ -1,40 +1,33 @@
 ﻿namespace Tests
 
 open System
-open NUnit.Framework
-
+open System.Threading
 open System.Reactive
 open System.Reactive.Linq
+open FSharp.Control
+
+open NUnit.Framework
 
 open Atom.Async
 
 [<TestFixture>]
 type AtomTests () =
 
-    let waitABit = async {
-        do! Async.Sleep 1000
-        printfn "1"
-        do! Async.Sleep 1000
-        printfn "2"
-        do! Async.Sleep 1000
-        printfn "3"
+    let waitSeconds s = async {
+        for i in [1..s] do
+            do! Async.Sleep 1000
+            printfn "%i" i
         }
 
     [<Test>]
     member x.``AwaitObservable`` () =
-
-        let obs = Observable.FromAsync waitABit
-
+        let cts = new CancellationTokenSource (4000)
+        let startTime = DateTime.Now
+        let obs = Observable.FromAsync ((waitSeconds 5), cts)
         async {
-
-            let! fstObs = Async.AwaitObservable obs
-            printfn "first done"
-            let! sndObs = Async.AwaitObservable obs
-            printfn "second done"
-        }
-
-        |> Async.Start
-
-        Async.RunSynchronously (Async.Sleep 10000)
-
-        Assert.AreEqual (0, 1)
+            do! Async.AwaitObservable obs
+            printfn "Async.AwaitObservable done"
+        } |> Async.RunSynchronously
+        let duration = DateTime.Now - startTime
+        printfn "Duration %A secs" duration.TotalSeconds
+        Assert.IsTrue ((duration.TotalSeconds < 4.0))

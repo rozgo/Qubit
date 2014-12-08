@@ -65,7 +65,7 @@ type ObservableSource<'T> () =
     member this.Completed () =
         Debug.Assert (not finished, "IObserver is already finished")
         finished <- true
-        completed()
+        completed ()
 
     member this.Error (err) =
         Debug.Assert (not finished, "IObserver is already finished")
