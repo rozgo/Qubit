@@ -5,6 +5,7 @@ open System.IO
 open OpenTK
 open OpenTK.Graphics.ES30
 open MonoTouch.Foundation
+open FSharp.Control.Reactive
 open Cortex.Renderer
 open Cortex
 
@@ -24,53 +25,47 @@ type Mesh =
         {
         vbos = [| 0; 0; 0; 0; |]
         count = 0
-        tex = Texture.fromRemote (filename + ".png")
+        tex = new Texture.Texture (filename)
         }
         then
 
             GL.GenBuffers (4, this.vbos)
 
-            let vertsData =
-                Asset.request (filename + ".verts")
-                |> Async.RunSynchronously
+            let v = Asset.observe (filename + ".verts")
+            let c = Asset.observe (filename + ".colors")
+            let u = Asset.observe (filename + ".uvs")
+            let t = Asset.observe (filename + ".tris")
 
-            let colorsData =
-                Asset.request (filename + ".colors")
-                |> Async.RunSynchronously
+            Observable.zipWith (fun c v -> (c, v)) v c
+            |> Observable.zipWith (fun u (c,v) -> (u, c, v)) u
+            |> Observable.zipWith (fun t (u,v,c) -> (t, u, v, c)) t
+            |> Observable.add (fun (t, u, v, c) ->
 
-            let uvsData = 
-                Asset.request (filename + ".uvs")
-                |> Async.RunSynchronously
+                this.count <- int t.Length / sizeof<int>
 
-            let trisData =
-                Asset.request (filename + ".tris")
-                |> Async.RunSynchronously
+                GL.BindBuffer (BufferTarget.ArrayBuffer, this.vbos.[0])
+                GL.BufferData (BufferTarget.ArrayBuffer,
+                    IntPtr (int v.Length),
+                    v, BufferUsage.StaticDraw)
+                GL.BindBuffer (BufferTarget.ArrayBuffer, 0)
+            
+                GL.BindBuffer (BufferTarget.ArrayBuffer, this.vbos.[1])
+                GL.BufferData (BufferTarget.ArrayBuffer,
+                    IntPtr (int c.Length),
+                    c, BufferUsage.StaticDraw)
+                GL.BindBuffer (BufferTarget.ArrayBuffer, 0)
+            
+                GL.BindBuffer (BufferTarget.ArrayBuffer, this.vbos.[2])
+                GL.BufferData (BufferTarget.ArrayBuffer,
+                    IntPtr (int u.Length),
+                    u, BufferUsage.StaticDraw)
+                GL.BindBuffer (BufferTarget.ArrayBuffer, 0)
 
-            this.count <- int trisData.Length / sizeof<int>
-
-            GL.BindBuffer (BufferTarget.ArrayBuffer, this.vbos.[0])
-            GL.BufferData (BufferTarget.ArrayBuffer,
-                IntPtr (int vertsData.Length),
-                vertsData, BufferUsage.StaticDraw)
-            GL.BindBuffer (BufferTarget.ArrayBuffer, 0)
-        
-            GL.BindBuffer (BufferTarget.ArrayBuffer, this.vbos.[1])
-            GL.BufferData (BufferTarget.ArrayBuffer,
-                IntPtr (int colorsData.Length),
-                colorsData, BufferUsage.StaticDraw)
-            GL.BindBuffer (BufferTarget.ArrayBuffer, 0)
-        
-            GL.BindBuffer (BufferTarget.ArrayBuffer, this.vbos.[2])
-            GL.BufferData (BufferTarget.ArrayBuffer,
-                IntPtr (int uvsData.Length),
-                uvsData, BufferUsage.StaticDraw)
-            GL.BindBuffer (BufferTarget.ArrayBuffer, 0)
-
-            GL.BindBuffer (BufferTarget.ElementArrayBuffer, this.vbos.[3])
-            GL.BufferData (BufferTarget.ElementArrayBuffer,
-                IntPtr (int trisData.Length),
-                trisData, BufferUsage.StaticDraw)
-            GL.BindBuffer (BufferTarget.ElementArrayBuffer, 0)
+                GL.BindBuffer (BufferTarget.ElementArrayBuffer, this.vbos.[3])
+                GL.BufferData (BufferTarget.ElementArrayBuffer,
+                    IntPtr (int t.Length),
+                    t, BufferUsage.StaticDraw)
+                GL.BindBuffer (BufferTarget.ElementArrayBuffer, 0))
 
     member this.VBOs = this.vbos
 

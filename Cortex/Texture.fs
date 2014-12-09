@@ -6,6 +6,7 @@ open OpenTK
 open OpenTK.Graphics.ES30
 open MonoTouch.Foundation
 open MonoTouch.GLKit
+open FSharp.Control.Reactive
 
 module private __ =
 
@@ -37,6 +38,11 @@ type Texture =
         then
             this.Bind ()
             this.Setup ()
+
+            let png = Asset.observe (name + ".png")
+            let jpg = Asset.observe (name + ".jpg")
+            Observable.merge png jpg
+            |> Observable.add this.OnData
 
     member this.Release () =
         let deleteTexture =
@@ -72,9 +78,4 @@ type Texture =
     interface IDisposable with
         member this.Dispose() = this.Release ()
 
-let fromRemote asset =
-    let tex = new Texture (asset)
-    Asset.observe asset
-    |> Observable.add tex.OnData
-    tex
 

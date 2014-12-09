@@ -57,9 +57,11 @@ let fetch asset = async {
     let! response = request.AsyncGetResponse ()
     let stream = response.GetResponseStream ()
     let length = (int response.ContentLength)
-    let! buffer = readToEnd stream
-    do! Async.SwitchToContext mainContext
-    (getSource asset).Trigger buffer }
+    if length > 0 then
+        let! buffer = readToEnd stream
+        do! Async.SwitchToContext mainContext
+        (getSource asset).Trigger buffer
+    }
 
 let observe asset =
     Async.Start (fetch asset)

@@ -23,13 +23,18 @@ let httpListener assetPath (handler:(string -> HttpListenerRequest -> HttpListen
     } |> Async.Start
 
 let serveAsset assetPath (request:HttpListenerRequest) (response:HttpListenerResponse) = async {
-    let filePath = assetPath + request.Url.AbsolutePath
-    let fileInfo = new FileInfo (filePath)
-    use fs = new FileStream (filePath, FileMode.Open)
-    response.ContentType <- Mime.MediaTypeNames.Application.Octet
-    response.ContentLength64 <- fileInfo.Length
-    let stream = response.OutputStream
-    do! Async.AwaitIAsyncResult (fs.CopyToAsync response.OutputStream) |> Async.Ignore }
+    try
+        let filePath = assetPath + request.Url.AbsolutePath
+        let fileInfo = new FileInfo (filePath)
+        use fs = new FileStream (filePath, FileMode.Open)
+        response.ContentType <- Mime.MediaTypeNames.Application.Octet
+        response.ContentLength64 <- fileInfo.Length
+        let stream = response.OutputStream
+        do! Async.AwaitIAsyncResult (fs.CopyToAsync response.OutputStream) |> Async.Ignore
+    with e ->
+        response.ContentLength64 <- 0L
+        printfn "%A" e.Message
+    }
 
 let httpHandler assetPath (request:HttpListenerRequest) (response:HttpListenerResponse) = async {
         printfn "httpHandler GET %A" request.Url.AbsolutePath
