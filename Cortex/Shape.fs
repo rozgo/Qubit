@@ -29,8 +29,6 @@ type Mesh =
         }
         then
 
-            GL.GenBuffers (4, this.vbos)
-
             let v = Asset.observe (filename + ".verts")
             let c = Asset.observe (filename + ".colors")
             let u = Asset.observe (filename + ".uvs")
@@ -40,6 +38,10 @@ type Mesh =
             |> Observable.zipWith (fun u (c,v) -> (u, c, v)) u
             |> Observable.zipWith (fun t (u,v,c) -> (t, u, v, c)) t
             |> Observable.add (fun (t, u, v, c) ->
+
+                GL.DeleteBuffers (4, this.vbos)
+                this.vbos <- [| 0; 0; 0; 0; |]
+                GL.GenBuffers (4, this.vbos)
 
                 this.count <- int t.Length / sizeof<int>
 
@@ -76,8 +78,10 @@ type Mesh =
         GL.BindBuffer (BufferTarget.ElementArrayBuffer, this.vbos.[3])
         GL.DrawElements (BeginMode.Triangles, this.count, DrawElementsType.UnsignedInt, IntPtr.Zero)
 
-
-
+    interface IDisposable with
+        member this.Dispose() =
+            GL.DeleteBuffers (4, this.vbos)
+            this.vbos <- [| 0; 0; 0; 0; |]
 
 
 

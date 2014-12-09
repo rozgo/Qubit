@@ -166,7 +166,7 @@ type QGLController =
             |> Observable.add (fun data ->
                 let names = Text.Encoding.ASCII.GetString data
                 let names = names.Split ([|Environment.NewLine|], StringSplitOptions.None)
-                let meshes = Array.fold (fun meshes mesh -> (Shape.Mesh (sprintf name mesh)) :: meshes) [] names
+                let meshes = Array.fold (fun meshes mesh -> (new Shape.Mesh (sprintf name mesh)) :: meshes) [] names
                 let actor = {meshes = meshes; offset = position}
                 this.actors <- Map.add (sprintf name "actor") actor this.actors)
 
