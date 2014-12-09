@@ -6,7 +6,6 @@ open OpenTK
 open OpenTK.Graphics.ES30
 open MonoTouch.Foundation
 open MonoTouch.GLKit
-open Cortex.Observable
 
 module private __ =
 
@@ -75,8 +74,7 @@ type Texture =
 
 let fromRemote asset =
     let tex = new Texture (asset)
-    Asset.AsObservable asset
-    |> Observable.subscribe tex.OnData
-    |> ignore
+    Asset.observe asset
+    |> Observable.add tex.OnData
     tex
 

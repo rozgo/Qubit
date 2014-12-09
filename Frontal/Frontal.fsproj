@@ -142,10 +142,8 @@
   <ItemGroup>
     <None Include="Info.plist" />
     <None Include="Entitlements.plist" />
-    <None Include="GenTest.fsx" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="React.fs" />
     <Compile Include="WebFront.fs" />
     <Compile Include="QGLController.fs" />
     <Compile Include="AppDelegate.fs" />

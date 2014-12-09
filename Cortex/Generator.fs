@@ -2,21 +2,20 @@
 
 open System
 open OpenTK
-open Cortex.Observable
 
 module Constant =
 
     type Float (num) =
-        let source = ObservableSource<float> ()
-        do source.Next num
-        member this.Next num = source.Next num
-        member this.AsObservable = source.AsObservable
+        let source = Event<float> ()
+        do source.Trigger num
+        member this.Next num = source.Trigger num
+        member this.AsObservable = source.Publish
 
 module Time =
 
-    let DeltaTime = ObservableSource<float> ()
+    let DeltaTime = Event<float> ()
 
-    let TotalTime = ObservableSource<float> ()
+    let TotalTime = Event<float> ()
 
     type Global () =
         
@@ -28,11 +27,8 @@ module Time =
             and set v =
                 lastTime <- time
                 time <- v
-                TotalTime.Next (time)
-                DeltaTime.Next (time - lastTime)
-
-
-        
+                TotalTime.Trigger (time)
+                DeltaTime.Trigger (time - lastTime)
 
 module Wave =
 
@@ -67,10 +63,10 @@ module Wave =
     type Oscillator (form, oFrequency, oPhase, oAmplitude, oOffset, inverted, oTime) =
 
         let mutable wave = {form = form; frequency = 1.0; phase = 0.0; amplitude = 1.0; offset = 0.0; inverted = inverted;}
-        let source = ObservableSource<float> ()
+        let source = Event<float> ()
 
         let Sample time = 
-            source.Next <| sample wave time
+            source.Trigger <| sample wave time
 
         let o0 = oFrequency |> Observable.subscribe (fun n -> wave <- {wave with frequency = n})
         let o1 = oPhase |> Observable.subscribe (fun n -> wave <- {wave with phase = n})
@@ -79,7 +75,7 @@ module Wave =
         let o4 = oTime |> Observable.subscribe (fun n -> Sample n)
 
         member this.Wave = wave
-        member this.AsObservable = source.AsObservable
+        member this.AsObservable = source.Publish
 
 
 module Touch =
@@ -95,8 +91,8 @@ module Touch =
         position : Vector3
         }
 
-    let Generator = new Event<Touch> ()
-    let Touches = Generator.Publish
+//    let Generator = Event<Touch> ()
+//    let Touches = Generator.Publish
 
 
 

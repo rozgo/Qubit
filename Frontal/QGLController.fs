@@ -16,28 +16,31 @@ open Cortex.Generator
 
 type Actor =
     {
-    meshes : Meshes.Mesh.Mesh list
+    meshes : Shape.Mesh list
     offset : Vector3
     }
 
+[<Register("QGLController")>]
 type QGLController =
     inherit GLKViewController
 
     val mutable context : EAGLContext
-    val mutable shader : Shaders.Vybe.Program option
+    val mutable shader : Shader.Vybe option
     val mutable actors : Actor list
     val mutable fingers : int array
+    val mutable touches : Event<Touch.Touch>
 
-
-    new (frame) = //as this =
+    new (frame) as this =
         {
-        inherit GLKViewController
-
+        inherit GLKViewController ()
         context = null
         shader = None
         actors = List.empty
         fingers = [| 0; 0; 0; 0; 0; |]
+        touches = new Event<Touch.Touch> ()
         }
+        then
+            this.View.Frame <- frame
 
     override this.ViewDidLoad () =
         base.ViewDidLoad ()
@@ -48,35 +51,32 @@ type QGLController =
         this.context.IsMultiThreaded <- true
         let view = this.View :?> GLKView
         view.Context <- this.context
+        view.ContentScaleFactor <- UIScreen.MainScreen.Scale
         view.DrawableDepthFormat <- GLKViewDrawableDepthFormat.Format24
         view.DrawInRect.Add (this.Draw)
-        this.Setup ()
 
-        this.View.MultipleTouchEnabled <- true
+        view.MultipleTouchEnabled <- true
+        view.UserInteractionEnabled <- true
 
-        Async.Start Asset.watch
+        this.PreferredFramesPerSecond <- 60
 
-        Touch.Touches |> Observable.add (printfn "%A")
+        Async.Start Asset.watching
 
-
-    member this.Setup () =
+        this.touches.Publish |> Observable.add (printfn "%A")
 
         EAGLContext.SetCurrentContext this.context |> ignore
-
         this.LoadShaders ()
-
-        GL.Enable EnableCap.DepthTest
 
     override this.Update () =
         ()
 
     member this.Draw (args : GLKViewDrawEventArgs) =
 
-        GL.ClearColor (0.f,0.f,0.f,1.f)
+        GL.ClearColor (0.f,0.f,1.f,1.f)
         GL.Clear (ClearBufferMask.ColorBufferBit ||| ClearBufferMask.DepthBufferBit)
 
-        GL.Enable (EnableCap.DepthTest)
-        GL.Enable (EnableCap.CullFace)
+        GL.Enable EnableCap.DepthTest
+        GL.Enable EnableCap.CullFace
 
         let size = this.View.Frame.Size
 
@@ -114,52 +114,34 @@ type QGLController =
 
     member this.LoadShaders () =
 
-//        let mutable meshes = List.empty<Meshes.Mesh.Mesh>    
-//
-//        use names = Async.RunSynchronously <| Asset.request ("Link/names.list")
-//        let names = (new StreamReader (names)).ReadToEnd ()
-//        let names = names.Split ([|Environment.NewLine|], StringSplitOptions.None)
-//
-//        for name in names do
-//           let m = Meshes.Mesh.Mesh ("Link/" + name)
-//           meshes <- m :: meshes
-//        let actor = {meshes = meshes; offset = Vector3(-3.f,0.f,0.f)}
-//        this.actors <- actor :: this.actors
+        let mutable meshes = List.empty<Shape.Mesh>    
+        let buffer =
+            Asset.request ("Link/names.list")
+            |> Async.RunSynchronously
+        let names = Text.Encoding.ASCII.GetString (buffer)
+        let names = names.Split ([|Environment.NewLine|], StringSplitOptions.None)
+        for name in names do
+           let m = Shape.Mesh ("Link/" + name)
+           meshes <- m :: meshes
+        let actor = {meshes = meshes; offset = Vector3(-3.f,0.f,0.f)}
+        this.actors <- actor :: this.actors
 
-        let mutable meshes = List.empty<Meshes.Mesh.Mesh>
+        let mutable meshes = List.empty<Shape.Mesh>
         let buffer =
             Asset.request ("Mario/names.list")
             |> Async.RunSynchronously
         let names = Text.Encoding.ASCII.GetString (buffer)
         let names = names.Split ([|Environment.NewLine|], StringSplitOptions.None)
-
         for name in names do
-           let m = Meshes.Mesh.Mesh ("Mario/" + name)
+           let m = Shape.Mesh ("Mario/" + name)
            meshes <- m :: meshes
-        let actor = {meshes = meshes; offset = Vector3(0.f,0.f,0.f)}
+        let actor = {meshes = meshes; offset = Vector3(3.f,0.f,0.f)}
         this.actors <- actor :: this.actors
-
-//        let m = Material.test ()
     
-        this.shader <- Some (Shaders.Vybe.Program ())
+        this.shader <- Some (Shader.Vybe ())
 
-
-    override this.Dispose disposing =
-        base.Dispose disposing
-        NSNotificationCenter.DefaultCenter.RemoveObserver (this)
-
-    override this.DidReceiveMemoryWarning () =
-        base.DidReceiveMemoryWarning ()
-
-//    override this.ViewWillAppear animated =
-//        base.ViewWillAppear animated
-//        eaglView.StartAnimating
-//
-//    override this.ViewWillDisappear animated =
-//        base.ViewWillDisappear animated
-//        eaglView.StopAnimating
-
-    member this.PushTouches (touches:UITouch[]) phase =
+    member this.PushTouches (touches:NSSet) phase =
+        let touches = touches.ToArray<UITouch> ()
         let fs = Seq.ofArray this.fingers
         for touch in touches do
             let mutable fingerIdx = -1
@@ -171,23 +153,23 @@ type QGLController =
                 if phase = Touch.Ended || phase = Touch.Cancelled then
                     this.fingers.[fingerIdx] <- 0
             let loc = touch.LocationInView this.View
-            Touch.Generator.Trigger {
+            this.touches.Trigger {
                 finger = Touch.Finger fingerIdx
                 phase = phase
                 position = Vector3 (loc.X, loc.Y, 0.0f) }
 
     override this.TouchesBegan (touches, evt) =
         base.TouchesBegan (touches, evt)
-        this.PushTouches (touches.ToArray<UITouch>()) Touch.Began
+        this.PushTouches touches Touch.Began
 
     override this.TouchesMoved (touches, evt) =
         base.TouchesMoved (touches, evt)
-        this.PushTouches (touches.ToArray<UITouch>()) Touch.Moved
+        this.PushTouches touches Touch.Moved
 
     override this.TouchesEnded (touches, evt) =
         base.TouchesEnded (touches, evt)
-        this.PushTouches (touches.ToArray<UITouch>()) Touch.Ended
+        this.PushTouches touches Touch.Ended
 
     override this.TouchesCancelled (touches, evt) =
         base.TouchesCancelled (touches, evt)
-        this.PushTouches (touches.ToArray<UITouch>()) Touch.Cancelled
+        this.PushTouches touches Touch.Cancelled

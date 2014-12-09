@@ -5,8 +5,6 @@ open System.Collections.Generic
 open System.Threading
 open System.IO
 open System.Net
-open Cortex.Observable
-
 open WebSocketSharp
 
 module private __ =
@@ -23,7 +21,7 @@ module private __ =
         use sr = new BinaryReader (output)
         return sr.ReadBytes (int output.Length) }
 
-    let sources = Dictionary<string,ObservableSource<byte array>> ()
+    let sources = Dictionary<string,Event<byte array>> ()
 
     let getSource asset =
         printfn "sources count: %A" sources.Count
@@ -31,7 +29,7 @@ module private __ =
         if hasKey then
             obs
         else
-            let obs = ObservableSource<byte array> ()
+            let obs = Event<byte array> ()
             sources.[asset] <- obs
             obs
 
@@ -61,13 +59,13 @@ let fetch asset = async {
     let length = (int response.ContentLength)
     let! buffer = readToEnd stream
     do! Async.SwitchToContext mainContext
-    (getSource asset).Next buffer }
+    (getSource asset).Trigger buffer }
 
-let AsObservable asset =
+let observe asset =
     Async.Start (fetch asset)
-    (getSource asset).AsObservable
+    (getSource asset).Publish
 
-let watch = async {
+let watching = async {
     let ws = new WebSocket ("ws://localhost:8081/asset")
 //    let ws = new WebSocket ("ws://192.168.3.139:8081/asset")
     ws.OnMessage
@@ -75,7 +73,6 @@ let watch = async {
         printfn "WS Client: %A" msg.Data
         let m = String.Copy msg.Data
         Async.Start (fetch m))
-    |> ignore
     ws.ConnectAsync ()
     while ws.IsAlive do
         ws.Ping () |> ignore

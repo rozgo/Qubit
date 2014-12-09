@@ -4,17 +4,25 @@ open System
 open MonoTouch.UIKit
 open MonoTouch.Foundation
 
-type AppControl (frame:Drawing.RectangleF, eagl:QGLController, web:WebFrontControl) as this =
-    inherit UIViewController ()
+//type AppControl (frame:Drawing.RectangleF, eagl:QGLController) as this =
+//    inherit UIViewController ()
+//
+//    do
+//        this.View.Frame <- frame
+//
+//        this.View.MultipleTouchEnabled <- true
+//        this.View.UserInteractionEnabled <- true
+//
+//        this.View.AddSubview eagl.View
+////        this.View.AddSubview web.View
+//        this.AddChildViewController eagl
+//
+//    override this.ViewDidLoad () =
+//        base.ViewDidLoad ()
 
-    do
-        this.View.Frame <- frame
 
-        this.View.AddSubview eagl.View
-        this.View.AddSubview web.View
-
-    override this.ViewDidLoad () =
-        base.ViewDidLoad ()
+//type AppControl (frame:Drawing.RectangleF, eagl:QGLController) as this =
+//    inherit UIViewController ()
 
 
 [<Register ("AppDelegate")>]
@@ -24,16 +32,16 @@ type AppDelegate () =
     let window = new UIWindow (UIScreen.MainScreen.Bounds)
 
     let eaglControl = new QGLController (window.Frame)
-    let webControl = new WebFrontControl (window.Frame)
-    let appControl = new AppControl (window.Frame, eaglControl, webControl)
+//    let webControl = new WebFrontControl (window.Frame)
+//    let appControl = new AppControl (window.Frame, eaglControl)
 
     override this.FinishedLaunching (app, options) =
-        window.RootViewController <- appControl
-        //window.Add eaglControl.View
-        //window.BackgroundColor <- UIColor.FromRGB(1.0f,0.0f,0.0f)
+//        window.Frame <- UIScreen.MainScreen.Bounds
+        window.RootViewController <- eaglControl
+        window.BackgroundColor <- UIColor.Red
+        window.UserInteractionEnabled <- true
+//        this.la
         window.MakeKeyAndVisible ()
-        React.Test
-        //React.AsyncTest
         true
 
 module Main =

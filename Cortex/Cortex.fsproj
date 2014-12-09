@@ -60,17 +60,13 @@
   <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.1\Framework\v4.0\Microsoft.FSharp.Targets" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="Observable.fs" />
     <Compile Include="Asset.fs" />
     <Compile Include="Renderer.fs" />
     <Compile Include="Texture.fs" />
-    <Compile Include="Shaders.fs" />
-    <Compile Include="Meshes.fs" />
-    <Compile Include="Scene.fs" />
-    <Compile Include="IO.fs" />
     <Compile Include="Utils.fs" />
     <Compile Include="Material.fs" />
-    <Compile Include="What.fs" />
     <Compile Include="Generator.fs" />
+    <Compile Include="Shader.fs" />
+    <Compile Include="Shape.fs" />
   </ItemGroup>
 </Project>
