@@ -13,6 +13,8 @@ open MonoTouch.CoreGraphics
 open MonoTouch.Foundation
 open OpenTK.Graphics.ES30
 open Cortex.Generator
+open FSharp.Control.Reactive
+open System.Reactive.Linq
 
 type Actor =
     {
@@ -26,7 +28,7 @@ type QGLController =
 
     val mutable context : EAGLContext
     val mutable shader : Shader.Vybe option
-    val mutable actors : Actor list
+    val mutable actors : Map<string,Actor>
     val mutable fingers : int array
     val mutable touches : Event<Touch.Touch>
 
@@ -35,7 +37,7 @@ type QGLController =
         inherit GLKViewController ()
         context = null
         shader = None
-        actors = List.empty
+        actors = Map.empty
         fingers = [| 0; 0; 0; 0; 0; |]
         touches = new Event<Touch.Touch> ()
         }
@@ -90,7 +92,9 @@ type QGLController =
 
 //        this.transY <- this.transY + 0.01f;
 
-        for actor in this.actors do
+        for kv in this.actors do
+
+            let actor = kv.Value
 
             match this.shader with
             | Some prog ->
@@ -114,29 +118,25 @@ type QGLController =
 
     member this.LoadShaders () =
 
-        let mutable meshes = List.empty<Shape.Mesh>    
-        let buffer =
-            Asset.request ("Link/names.list")
-            |> Async.RunSynchronously
-        let names = Text.Encoding.ASCII.GetString (buffer)
-        let names = names.Split ([|Environment.NewLine|], StringSplitOptions.None)
-        for name in names do
-           let m = Shape.Mesh ("Link/" + name)
-           meshes <- m :: meshes
-        let actor = {meshes = meshes; offset = Vector3(-3.f,0.f,0.f)}
-        this.actors <- actor :: this.actors
+        let lines buffer =
+            let text = Text.Encoding.ASCII.GetString (buffer)
+            text.Split ([|Environment.NewLine|], StringSplitOptions.None)
 
-        let mutable meshes = List.empty<Shape.Mesh>
-        let buffer =
-            Asset.request ("Mario/names.list")
-            |> Async.RunSynchronously
-        let names = Text.Encoding.ASCII.GetString (buffer)
-        let names = names.Split ([|Environment.NewLine|], StringSplitOptions.None)
-        for name in names do
-           let m = Shape.Mesh ("Mario/" + name)
-           meshes <- m :: meshes
-        let actor = {meshes = meshes; offset = Vector3(3.f,0.f,0.f)}
-        this.actors <- actor :: this.actors
+        let link = "Link/names.list"
+        Asset.observe link
+        |> Observable.add (fun buffer ->
+            let names = lines buffer
+            let meshes = Array.fold (fun meshes name -> (Shape.Mesh ("Link/" + name)) :: meshes) [] names
+            let actor = {meshes = meshes; offset = Vector3(-3.f,0.f,0.f)}
+            this.actors <- Map.add link actor this.actors)
+
+        let mario = "Mario/names.list"
+        Asset.observe mario
+        |> Observable.add (fun buffer ->
+            let names = lines buffer
+            let meshes = Array.fold (fun meshes name -> (Shape.Mesh ("Mario/" + name)) :: meshes) [] names
+            let actor = {meshes = meshes; offset = Vector3(3.f,0.f,0.f)}
+            this.actors <- Map.add mario actor this.actors)
     
         this.shader <- Some (Shader.Vybe ())
 
