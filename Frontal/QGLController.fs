@@ -69,6 +69,8 @@ type QGLController =
         EAGLContext.SetCurrentContext this.context |> ignore
         this.LoadShaders ()
 
+        this.LoadActors ()
+
     override this.Update () =
         ()
 
@@ -117,26 +119,6 @@ type QGLController =
             | None -> ()
 
     member this.LoadShaders () =
-
-        let lines buffer =
-            let text = Text.Encoding.ASCII.GetString (buffer)
-            text.Split ([|Environment.NewLine|], StringSplitOptions.None)
-
-        let link = "Link/names.list"
-        Asset.observe link
-        |> Observable.add (fun buffer ->
-            let names = lines buffer
-            let meshes = Array.fold (fun meshes name -> (Shape.Mesh ("Link/" + name)) :: meshes) [] names
-            let actor = {meshes = meshes; offset = Vector3(-3.f,0.f,0.f)}
-            this.actors <- Map.add link actor this.actors)
-
-        let mario = "Mario/names.list"
-        Asset.observe mario
-        |> Observable.add (fun buffer ->
-            let names = lines buffer
-            let meshes = Array.fold (fun meshes name -> (Shape.Mesh ("Mario/" + name)) :: meshes) [] names
-            let actor = {meshes = meshes; offset = Vector3(3.f,0.f,0.f)}
-            this.actors <- Map.add mario actor this.actors)
     
         this.shader <- Some (Shader.Vybe ())
 
@@ -173,3 +155,20 @@ type QGLController =
     override this.TouchesCancelled (touches, evt) =
         base.TouchesCancelled (touches, evt)
         this.PushTouches touches Touch.Cancelled
+
+
+    member this.LoadActors () =
+
+        let watch name position =
+            let format = name + "/%s"
+            let name = Printf.StringFormat<string -> string> format
+            Asset.observe (sprintf name "names.list")
+            |> Observable.add (fun data ->
+                let names = Text.Encoding.ASCII.GetString data
+                let names = names.Split ([|Environment.NewLine|], StringSplitOptions.None)
+                let meshes = Array.fold (fun meshes mesh -> (Shape.Mesh (sprintf name mesh)) :: meshes) [] names
+                let actor = {meshes = meshes; offset = position}
+                this.actors <- Map.add (sprintf name "actor") actor this.actors)
+
+        watch "Link" (Vector3(3.f,0.f,0.f))
+        watch "Mario" (Vector3(-3.f,0.f,0.f))
