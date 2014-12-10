@@ -40,8 +40,8 @@ let fetch asset = async {
 
 let observe asset : IEvent<byte array> =
     Async.Start (fetch asset)
-    Axon.observe<string> ("fswatch:" + asset)
-    |> Observable.add (fun _ -> Async.Start (fetch asset))
+    Axon.observe<unit> ("fswatch:" + asset)
+    |> Observable.add (fun () -> Async.Start (fetch asset))
     Axon.observe<byte array> ("asset/changed:" + asset)
 
 let watching = async {
@@ -49,7 +49,7 @@ let watching = async {
 //    let ws = new WebSocket ("ws://192.168.3.139:8081/asset")
     ws.OnMessage
     |> Observable.add (fun (msg) ->
-        Axon.trigger<string> msg.Data "")
+        Axon.trigger<unit> msg.Data ())
     ws.ConnectAsync ()
     while ws.IsAlive do
         ws.Ping () |> ignore
