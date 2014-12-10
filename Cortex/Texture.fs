@@ -10,72 +10,63 @@ open FSharp.Control.Reactive
 
 module private __ =
 
-    let mutable stub : GLKTextureInfo option = None
+    let setup () =
+        GL.TexParameter (TextureTarget.Texture2D, TextureParameterName.TextureWrapS, int All.Repeat)
+        GL.TexParameter (TextureTarget.Texture2D, TextureParameterName.TextureWrapT, int All.Repeat)
+        GL.TexParameter (TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, int All.Linear)
+        GL.TexParameter (TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, int All.Linear)
 
-    let getStub =
-        match stub with
-        | Some texInfo -> texInfo
-        | None ->
-            let texOps = new GLKTextureOperations ()
-            texOps.OriginBottomLeft <- new Nullable<bool> (true)
-            let path = NSBundle.MainBundle.PathForResource ("texguide", "jpg")
-            let (texInfo, err) = GLKTextureLoader.FromFile (path, texOps)
-            stub <- Some texInfo
-            texInfo
+    let stub =
+        let texOps = new GLKTextureOperations ()
+        texOps.OriginBottomLeft <- new Nullable<bool> (true)
+        let path = NSBundle.MainBundle.PathForResource ("texguide", "jpg")
+        let (texInfo, err) = GLKTextureLoader.FromFile (path, texOps)
+        GL.BindTexture (TextureTarget.Texture2D, texInfo.Name)
+        setup ()
+        GL.BindTexture (TextureTarget.Texture2D, 0)
+        texInfo
+
+    let onAsset name success bytes =
+        use texData = NSData.FromArray bytes
+        let texOps = new GLKTextureOperations ()
+        texOps.OriginBottomLeft <- new Nullable<bool> (true)
+        match GLKTextureLoader.FromData (texData, texOps) with
+        | (tex, null) -> success tex
+        | (_, err) -> printfn "Err loading tex: %A %A" name err
 
 open __
 
 type Texture =
 
     val mutable texInfo : GLKTextureInfo
-    val name : string
+    val asset : string
+    val mutable observer : IDisposable
 
-    new (name) as this =
+    new (asset) as this =
         {
-        texInfo = getStub
-        name = name
+        texInfo = stub
+        asset = asset
+        observer = null
         }
         then
-            this.Bind ()
-            this.Setup ()
-
-            let png = Asset.observe (name + ".png")
-            let jpg = Asset.observe (name + ".jpg")
-            Observable.merge png jpg
-            |> Observable.add this.OnData
+            let png = Asset.observe (asset + ".png")
+            let jpg = Asset.observe (asset + ".jpg")
+            this.observer <- Observable.merge png jpg
+            |> Observable.subscribe (onAsset asset (fun tex ->
+                this.Release ()
+                this.texInfo <- tex
+                GL.BindTexture (TextureTarget.Texture2D, this.texInfo.Name)
+                setup ()))
 
     member this.Release () =
-        let deleteTexture =
+        if this.texInfo <> stub then
             GL.DeleteTexture this.texInfo.Name
             this.texInfo.Dispose ()
-            this.texInfo <- getStub
-        match stub with
-        | Some stub when this.texInfo <> stub -> deleteTexture
-        | None -> deleteTexture
-        | _ -> ()
+            this.texInfo <- stub
 
-    member this.OnData bytes =
-        use texData = NSData.FromArray bytes
-        let texOps = new GLKTextureOperations ()
-        texOps.OriginBottomLeft <- new Nullable<bool> (true)
-        match GLKTextureLoader.FromData (texData, texOps) with
-        | (tex, null) ->
-            this.Release ()
-            this.texInfo <- tex
-            GL.BindTexture (TextureTarget.Texture2D, this.texInfo.Name)
-            this.Setup ()
-        | (_, err) -> printfn "Err loading tex: %A %A" this.name err
-
-    member this.Setup () =
-        GL.TexParameter (TextureTarget.Texture2D, TextureParameterName.TextureWrapS, int All.Repeat)
-        GL.TexParameter (TextureTarget.Texture2D, TextureParameterName.TextureWrapT, int All.Repeat)
-        GL.TexParameter (TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, int All.Linear)
-        GL.TexParameter (TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, int All.Linear)
-
-    member this.Bind () =
-        GL.BindTexture (TextureTarget.Texture2D, this.texInfo.Name)
+    member this.Bind () = GL.BindTexture (TextureTarget.Texture2D, this.texInfo.Name)
 
     interface IDisposable with
-        member this.Dispose() = this.Release ()
-
-
+        member this.Dispose () =
+            this.observer.Dispose ()
+            this.Release ()
