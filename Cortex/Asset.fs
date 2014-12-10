@@ -6,32 +6,9 @@ open System.Threading
 open System.IO
 open System.Net
 open WebSocketSharp
+open Neuron
 
 module private __ =
-
-    let readToEnd (stream:Stream) = async {
-        let buffer = Array.zeroCreate 1024
-        use output = new MemoryStream ()
-        let finished = ref false
-        while not finished.Value do
-          let! count = stream.AsyncRead (buffer, 0, 1024)
-          do! output.AsyncWrite (buffer, 0, count)
-          finished := count <= 0
-        output.Seek(0L, SeekOrigin.Begin) |> ignore
-        use sr = new BinaryReader (output)
-        return sr.ReadBytes (int output.Length) }
-
-    let sources = Dictionary<string,Event<byte array>> ()
-
-    let getSource asset =
-        printfn "sources count: %A" sources.Count
-        let (hasKey, obs) = sources.TryGetValue asset
-        if hasKey then
-            obs
-        else
-            let obs = Event<byte array> ()
-            sources.[asset] <- obs
-            obs
 
 //    let baseUrl = "http://192.168.3.139:8080/"
     let baseUrl = "http://localhost:8080/"
@@ -46,7 +23,7 @@ let request asset = async {
     let! response = request.AsyncGetResponse ()
     let stream = response.GetResponseStream ()
     let length = (int response.ContentLength)
-    let! buffer = readToEnd stream
+    let! buffer = Atom.readToEnd stream
     return buffer }
 
 let fetch asset = async {
@@ -56,23 +33,23 @@ let fetch asset = async {
     let stream = response.GetResponseStream ()
     let length = (int response.ContentLength)
     if length > 0 then
-        let! buffer = readToEnd stream
+        let! buffer = Atom.readToEnd stream
         do! Async.SwitchToContext mainContext
-        (getSource asset).Trigger buffer
+        Axon.trigger<byte array> ("asset/changed:" + asset) buffer
     }
 
-let observe asset =
+let observe asset : IEvent<byte array> =
     Async.Start (fetch asset)
-    (getSource asset).Publish
+    Axon.observe<string> ("fswatch:" + asset)
+    |> Observable.add (fun _ -> Async.Start (fetch asset))
+    Axon.observe<byte array> ("asset/changed:" + asset)
 
 let watching = async {
     let ws = new WebSocket ("ws://localhost:8081/asset")
 //    let ws = new WebSocket ("ws://192.168.3.139:8081/asset")
     ws.OnMessage
     |> Observable.add (fun (msg) ->
-        printfn "WS Client: %A" msg.Data
-        let m = String.Copy msg.Data
-        Async.Start (fetch m))
+        Axon.trigger<string> msg.Data "")
     ws.ConnectAsync ()
     while ws.IsAlive do
         ws.Ping () |> ignore

@@ -51,7 +51,7 @@ type WebSocketAsset =
         fileObserver = fileObserver
         fileHandler = null }
 
-    member this.Cast (msg:string) = this.Send msg
+    member this.Cast (msg:string) = this.Send ("fswatch:" + msg)
 
     override this.OnOpen () =
         printfn "WebSocket Open"

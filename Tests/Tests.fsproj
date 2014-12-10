@@ -37,7 +37,6 @@
     <Reference Include="FSharp.Core" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="nunit.framework" />
     <Reference Include="FSharp.Control.Reactive">
       <HintPath>..\Libs\FSharp.Control.Reactive.dll</HintPath>
     </Reference>
