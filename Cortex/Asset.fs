@@ -33,8 +33,6 @@ module private __ =
             sources.[asset] <- obs
             obs
 
-    let requestQueue = new List<WebRequest> ()
-
 //    let baseUrl = "http://192.168.3.139:8080/"
     let baseUrl = "http://localhost:8080/"
 

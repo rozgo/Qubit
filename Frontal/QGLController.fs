@@ -9,7 +9,6 @@ open OpenTK
 open MonoTouch
 open MonoTouch.OpenGLES
 open MonoTouch.GLKit
-open MonoTouch.CoreGraphics
 open MonoTouch.Foundation
 open OpenTK.Graphics.ES30
 open Cortex.Generator
@@ -119,7 +118,6 @@ type QGLController =
             | None -> ()
 
     member this.LoadShaders () =
-    
         this.shader <- Some (Shader.Vybe ())
 
     member this.PushTouches (touches:NSSet) phase =
@@ -158,7 +156,6 @@ type QGLController =
 
 
     member this.LoadActors () =
-
         let watch name position =
             let format = name + "/%s"
             let name = Printf.StringFormat<string -> string> format
@@ -169,6 +166,5 @@ type QGLController =
                 let meshes = Array.fold (fun meshes mesh -> (new Shape.Mesh (sprintf name mesh)) :: meshes) [] names
                 let actor = {meshes = meshes; offset = position}
                 this.actors <- Map.add (sprintf name "actor") actor this.actors)
-
         watch "Link" (Vector3(3.f,0.f,0.f))
         watch "Mario" (Vector3(-3.f,0.f,0.f))

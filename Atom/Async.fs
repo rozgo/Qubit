@@ -15,25 +15,3 @@ type Microsoft.FSharp.Control.Async with
             sub.Dispose ()
         and sub : IDisposable = obs.Subscribe<'T> (trigger)
         Async.AwaitEvent (timeReceived.Publish)
-
-type System.Reactive.Linq.Observable with
-  static member FromAsync (computation, ?cts : CancellationTokenSource) = 
-      Observable.Create<'a> (Func<IObserver<'a>, Action>(fun o ->
-        if o = null then nullArg "observer"
-        let cts = defaultArg cts (new CancellationTokenSource ())
-        let invoked = ref 0
-        let cancelOrDispose cancel =
-          if Interlocked.CompareExchange (invoked, 1, 0) = 0 then
-            if cancel then cts.Cancel () else cts.Dispose ()
-        let wrapper = async {
-          try
-            let res = ref Unchecked.defaultof<_>
-            try
-              let! result = computation
-              res := result
-            with e -> o.OnError (e)
-            o.OnNext (!res)
-            o.OnCompleted ()
-          finally cancelOrDispose false }
-        Async.StartImmediate (wrapper, cts.Token)
-        Action(fun () -> cancelOrDispose true)))

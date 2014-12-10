@@ -13,21 +13,15 @@ open Atom.Async
 [<TestFixture>]
 type AtomTests () =
 
-    let waitSeconds s = async {
-        for i in [1..s] do
-            do! Async.Sleep 1000
-            printfn "%i" i
-        }
-
     let observe = new Builders.ObservableBuilder ()
 
     [<Test>]
     member x.``AwaitObservable`` () =
         let cts = new CancellationTokenSource (4000)
         let startTime = DateTime.Now
-        let obs = Observable.FromAsync ((waitSeconds 5), cts)
+        let obs = Observable.Timer (TimeSpan (0, 0, 3))
         async {
-            do! Async.AwaitObservable obs
+            let! t = Async.AwaitObservable obs
             printfn "Async.AwaitObservable done"
         } |> Async.RunSynchronously
         let duration = DateTime.Now - startTime
@@ -36,12 +30,6 @@ type AtomTests () =
 
     [<Test>]
     member x.``Observe Async`` () =
-
-        let obs = observe {
-            yield 4
-            }
-
-        obs
+        observe {yield 4}
         |> Observable.add (printfn "%A")
-
 
