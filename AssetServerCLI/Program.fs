@@ -67,7 +67,7 @@ type WebSocketAsset =
     override this.OnMessage (e:MessageEventArgs) = printfn "WebSocket Message %A" e
 
 let webSocketServer fileObserver =
-//    let ws = new WebSocketServer ("ws://192.168.3.139:8081")
+//    let ws = new WebSocketServer ("ws://192.168.4.110:8081")
     let ws = new WebSocketServer ("ws://localhost:8081")
     ws.KeepClean <- false
     ws.AddWebSocketService<WebSocketAsset> ("/asset", fun () -> new WebSocketAsset (fileObserver) )

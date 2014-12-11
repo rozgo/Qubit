@@ -54,7 +54,7 @@ type QGLController =
         view.Context <- this.context
         view.ContentScaleFactor <- UIScreen.MainScreen.Scale
         view.DrawableDepthFormat <- GLKViewDrawableDepthFormat.Format24
-        view.DrawInRect.Add (this.Draw)
+        view.DrawInRect.Add this.Draw
 
         view.MultipleTouchEnabled <- true
         view.UserInteractionEnabled <- true
@@ -153,7 +153,6 @@ type QGLController =
     override this.TouchesCancelled (touches, evt) =
         base.TouchesCancelled (touches, evt)
         this.PushTouches touches Touch.Cancelled
-
 
     member this.LoadActors () =
         let watch name position =

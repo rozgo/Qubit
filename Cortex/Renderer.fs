@@ -3,6 +3,7 @@
 open System
 open OpenTK
 open OpenTK.Graphics.ES30
+open MonoTouch.OpenGLES
 open MonoTouch.Foundation
 
 module Renderer =
@@ -41,8 +42,9 @@ module Renderer =
             let log = GL.GetShaderInfoLog (glId)
             if log.Length = 0 then NoShaderInfo
             else ShaderInfo log
-        let err = GL.GetErrorCode ()
-        if err = ErrorCode.NoError then
+        let mutable err = 0
+        GL.GetShader (glId, ShaderParameter.CompileStatus, &err)
+        if err = 1 then
             CompiledVertShader (VertShaderObject (VertShaderId glId), info)
         else
             FailedVertShader info
@@ -55,10 +57,11 @@ module Renderer =
             let log = GL.GetShaderInfoLog (glId)
             if log.Length = 0 then NoShaderInfo
             else ShaderInfo log
-        let err = GL.GetErrorCode ()
-        if err = ErrorCode.NoError then
+        let mutable err = 0
+        GL.GetShader (glId, ShaderParameter.CompileStatus, &err)
+        if err = 1 then
             CompiledFragShader (FragShaderObject (FragShaderId glId), info)
-        else
+        else           
             FailedFragShader info
 
     let ProgShader vertShader fragShader bind =
@@ -75,8 +78,9 @@ module Renderer =
                 let log = GL.GetProgramInfoLog (glId)
                 if log.Length = 0 then NoShaderInfo
                 else ShaderInfo log
-            let err = GL.GetErrorCode ()
-            if err = ErrorCode.NoError then
+            let mutable err = 0
+            GL.GetProgram (glId, ProgramParameter.LinkStatus, &err)
+            if err = 1 then
                 LinkedProgShader (ProgShaderObject (ProgShaderId glId), info)
             else
                 FailedProgShader info

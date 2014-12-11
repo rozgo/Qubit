@@ -10,7 +10,7 @@ open Neuron
 
 module private __ =
 
-//    let baseUrl = "http://192.168.3.139:8080/"
+//    let baseUrl = "http://192.168.4.110:8080/"
     let baseUrl = "http://localhost:8080/"
 
 open __
@@ -35,8 +35,7 @@ let fetch asset = async {
     if length > 0 then
         let! buffer = Atom.readToEnd stream
         do! Async.SwitchToContext mainContext
-        Axon.trigger<byte array> ("asset/changed:" + asset) buffer
-    }
+        Axon.trigger<byte array> ("asset/changed:" + asset) buffer }
 
 let observe asset : IEvent<byte array> =
     Async.Start (fetch asset)
@@ -46,7 +45,7 @@ let observe asset : IEvent<byte array> =
 
 let watching = async {
     let ws = new WebSocket ("ws://localhost:8081/asset")
-//    let ws = new WebSocket ("ws://192.168.3.139:8081/asset")
+//    let ws = new WebSocket ("ws://192.168.4.110:8081/asset")
     ws.OnMessage
     |> Observable.add (fun (msg) ->
         Axon.trigger<unit> msg.Data ())

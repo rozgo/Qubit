@@ -62,10 +62,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.1\Framework\v4.0\Microsoft.FSharp.Targets" />
   <ItemGroup>
-    <ProjectReference Include="..\Signal\Signal.fsproj">
-      <Project>{79DEC74E-FD46-43A2-ABE5-E796293DCD2C}</Project>
-      <Name>Signal</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Atom\Atom.fsproj">
       <Project>{A5543105-1977-4323-8A9E-96A1CFE64869}</Project>
       <Name>Atom</Name>

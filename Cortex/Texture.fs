@@ -27,12 +27,15 @@ module private __ =
         texInfo
 
     let onAsset name success bytes =
-        use texData = NSData.FromArray bytes
-        let texOps = new GLKTextureOperations ()
-        texOps.OriginBottomLeft <- new Nullable<bool> (true)
-        match GLKTextureLoader.FromData (texData, texOps) with
-        | (tex, null) -> success tex
-        | (_, err) -> printfn "Err loading tex: %A %A" name err
+        try
+            use texData = NSData.FromArray bytes
+            let texOps = new GLKTextureOperations ()
+            texOps.OriginBottomLeft <- new Nullable<bool> (true)
+            match GLKTextureLoader.FromData (texData, texOps) with
+            | (tex, null) -> success tex
+            | (_, err) -> printfn "Err loading tex: %A %A" name err
+        with e ->
+            printfn "%A" e
 
 open __
 

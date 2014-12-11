@@ -152,11 +152,7 @@
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
     <BundleResource Include="Resources\Default-568h%402x.png" />
-    <BundleResource Include="Shader.vsh" />
-    <BundleResource Include="Shader.fsh" />
     <BundleResource Include="Resources\Default-Portrait%402x.png" />
-    <BundleResource Include="Vybe.vsh" />
-    <BundleResource Include="Vybe.fsh" />
     <BundleResource Include="..\Assets\texguide.jpg">
       <Link>Resources\texguide.jpg</Link>
     </BundleResource>

@@ -30,4 +30,3 @@ module Axon =
     let trigger<'T> path msg =
         (get<'T> path).Trigger msg
 
-

@@ -1,4 +1,4 @@
-﻿precision highp float;
+precision highp float;
 
 uniform sampler2D chan0;
 
