@@ -61,7 +61,7 @@ module Renderer =
         GL.GetShader (glId, ShaderParameter.CompileStatus, &err)
         if err = 1 then
             CompiledFragShader (FragShaderObject (FragShaderId glId), info)
-        else           
+        else
             FailedFragShader info
 
     let ProgShader vertShader fragShader bind =
