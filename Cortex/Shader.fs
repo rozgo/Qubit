@@ -7,9 +7,9 @@ open MonoTouch.Foundation
 open Cortex.Renderer
 open FSharp.Control.Reactive
 
-module Validate =
+module private __ =
 
-    let ok vertShader fragShader progShader vertPath fragPath =
+    let validate vertShader fragShader progShader vertPath fragPath =
         match vertShader, fragShader, progShader with
         | FailedVertShader info, _, _ -> 
             printfn "%A" info
@@ -26,7 +26,9 @@ module Validate =
             false
         | _ -> true
 
-let binToAscii bin = Text.Encoding.ASCII.GetString bin
+    let binToAscii bin = Text.Encoding.ASCII.GetString bin
+
+open __
 
 type Vybe =
 

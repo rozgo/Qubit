@@ -125,4 +125,10 @@
     <Compile Include="UnitTestAppDelegate.fs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.FSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\Signal\Signal.fsproj">
+      <Project>{79DEC74E-FD46-43A2-ABE5-E796293DCD2C}</Project>
+      <Name>Signal</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

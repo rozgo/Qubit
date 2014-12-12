@@ -9,6 +9,8 @@ open FSharp.Control.Reactive
 open Cortex.Renderer
 open Cortex
 
+let observe = new Builders.ObservableBuilder ()
+
 module private __ =
 
     let buffer (target:BufferTarget) (bytes:byte array) (address:int) =
@@ -37,9 +39,13 @@ type Mesh =
             let c = Asset.observe (filename + ".colors")
             let u = Asset.observe (filename + ".uvs")
             let t = Asset.observe (filename + ".tris")
-            this.observer <- Observable.zipWith (fun c v -> (c, v)) v c
-            |> Observable.zipWith (fun u (c,v) -> (u, c, v)) u
-            |> Observable.zipWith (fun t (u,v,c) -> (t, u, v, c)) t
+
+            let obs = observe {
+                let z0 = Observable.zipWith (fun c v -> (c, v)) v c
+                let z1 = Observable.zipWith (fun u (c,v) -> (u, c, v)) u z0
+                return! Observable.zipWith (fun t (u,v,c) -> (t, u, v, c)) t z1}
+
+            this.observer <- obs
             |> Observable.subscribe (fun (t, u, v, c) ->
                 GL.DeleteBuffers (4, this.vbos)
                 this.vbos <- [|0; 0; 0; 0;|]

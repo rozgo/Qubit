@@ -29,19 +29,3 @@ let readToEnd (stream:Stream) = async {
     use sr = new BinaryReader (output)
     return sr.ReadBytes (int output.Length) }
 
-//type Op =
-//    | Sample of (float -> float)
-//    | Add of Op * Op
-//    | Multiply of Op * Op
-//    | Compose of Op * Op
-//    | Op of Op
-//
-//type Rt =
-//    | RtDraw of string
-//    | RtTexture of Rt
-//
-//type RenderBuilder () =
-//
-//    member this.Bind (m, f) = f m
-//
-//    member this.Return (x) = x
