@@ -1,8 +1,8 @@
 ﻿namespace Cortex
 
 open System
-open MonoTouch.UIKit
-open MonoTouch.Foundation
+open UIKit
+open Foundation
 
 //type AppControl (frame:Drawing.RectangleF, eagl:QGLController) as this =
 //    inherit UIViewController ()

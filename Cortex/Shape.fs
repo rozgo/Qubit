@@ -4,7 +4,7 @@ open System
 open System.IO
 open OpenTK
 open OpenTK.Graphics.ES30
-open MonoTouch.Foundation
+open Foundation
 open FSharp.Control.Reactive
 open Cortex.Renderer
 open Cortex

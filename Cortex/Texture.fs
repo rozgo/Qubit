@@ -4,8 +4,8 @@ open System
 open System.IO
 open OpenTK
 open OpenTK.Graphics.ES30
-open MonoTouch.Foundation
-open MonoTouch.GLKit
+open Foundation
+open GLKit
 open FSharp.Control.Reactive
 
 module private __ =

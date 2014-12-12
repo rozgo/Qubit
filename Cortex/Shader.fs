@@ -3,7 +3,7 @@
 open System
 open OpenTK
 open OpenTK.Graphics.ES30
-open MonoTouch.Foundation
+open Foundation
 open Cortex.Renderer
 open FSharp.Control.Reactive
 

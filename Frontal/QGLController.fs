@@ -4,12 +4,11 @@ open System
 open System.IO
 open System.Threading
 open System.Drawing
-open MonoTouch.UIKit
+open UIKit
 open OpenTK
-open MonoTouch
-open MonoTouch.OpenGLES
-open MonoTouch.GLKit
-open MonoTouch.Foundation
+open OpenGLES
+open GLKit
+open Foundation
 open OpenTK.Graphics.ES30
 open Cortex.Generator
 open FSharp.Control.Reactive
@@ -59,8 +58,9 @@ type QGLController =
         view.MultipleTouchEnabled <- true
         view.UserInteractionEnabled <- true
 
-        this.PreferredFramesPerSecond <- 60
+        let num : nint = nint.op_Explicit 10L
 
+        this.PreferredFramesPerSecond <- nint.op_Explicit 60L
         Async.Start Asset.watching
 
         this.touches.Publish |> Observable.add (printfn "%A")
@@ -136,7 +136,7 @@ type QGLController =
             this.touches.Trigger {
                 finger = Touch.Finger fingerIdx
                 phase = phase
-                position = Vector3 (loc.X, loc.Y, 0.0f) }
+                position = Vector3 (single loc.X, single loc.Y, 0.0f) }
 
     override this.TouchesBegan (touches, evt) =
         base.TouchesBegan (touches, evt)

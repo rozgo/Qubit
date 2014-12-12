@@ -3,8 +3,8 @@
 open System
 open OpenTK
 open OpenTK.Graphics.ES30
-open MonoTouch.OpenGLES
-open MonoTouch.Foundation
+open OpenGLES
+open Foundation
 
 module Renderer =
 

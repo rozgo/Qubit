@@ -2,16 +2,17 @@
 
 open System
 
-open MonoTouch.Foundation
-open MonoTouch.UIKit
+open Foundation
+open UIKit
+open CoreGraphics
 
-type WebFrontControl (frame:Drawing.RectangleF) as this =
+type WebFrontControl (frame:CGRect) as this =
     inherit UIViewController ()
 
     let fingers = [| 0; 0; 0; 0; 0; |]
     let fs = Seq.ofArray fingers
-    let clear = UIColor.FromRGBA (1.f,0.f,0.f,1.f)
-    let viewport = Drawing.RectangleF (0.f, 0.f, frame.Width, 40.f)
+    let clear = UIColor.FromRGBA (255, 0, 0, 255)
+    let viewport = frame//CGRect ( 0.0, 0.f, frame.Width, 40.f)
     let webView = new UIWebView (frame)
 
     do
