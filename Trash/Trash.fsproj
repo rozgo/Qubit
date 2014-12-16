@@ -42,6 +42,9 @@
     <Reference Include="System.Reactive.Linq">
       <HintPath>..\Libs\System.Reactive.Linq.dll</HintPath>
     </Reference>
+    <Reference Include="System.Reactive.Core">
+      <HintPath>..\Libs\System.Reactive.Core.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />

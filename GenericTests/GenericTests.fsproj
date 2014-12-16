@@ -41,6 +41,9 @@
     <Reference Include="FSharp.Control.Reactive">
       <HintPath>..\Libs\FSharp.Control.Reactive.dll</HintPath>
     </Reference>
+    <Reference Include="System.Reactive.Core">
+      <HintPath>..\Libs\System.Reactive.Core.dll</HintPath>
+    </Reference>
     <Reference Include="System.Reactive.Interfaces">
       <HintPath>..\Libs\System.Reactive.Interfaces.dll</HintPath>
     </Reference>

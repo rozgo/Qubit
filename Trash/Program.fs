@@ -1,13 +1,16 @@
 ﻿open System
+open System.Threading
+open System.Collections
+open System.Collections.Generic
+open System.Linq
+open System.Reactive.Linq
+open System.Reactive.Concurrency
+open System.Reactive.Disposables
 open FSharp.Control.Reactive
 
-
-[<EntryPoint>]
-let main argv = 
+let doSomething01 =
 
     let observe = new Builders.ObservableBuilder ()
-
-    printfn "%A" argv
 
     let evt1 = new Event<string> ()
     let evt2 = new Event<string> ()
@@ -44,6 +47,25 @@ let main argv =
         }
 
     a |> Async.Start
+
+
+[<EntryPoint>]
+let main argv = 
+
+    let evt (obs:IObserver<int>) = async {
+        do! Async.Sleep 1000
+        obs.OnNext 1
+        do! Async.Sleep 1000
+        obs.OnNext 2
+        do! Async.Sleep 1000
+        obs.OnNext 3
+        obs.OnCompleted () }
+
+    let obs = Observable.createWithDisposable (fun obs ->
+        Async.Start (evt obs)
+        Disposable.Empty)
+
+    Observable.add (printfn "%A") obs
 
     printfn "Press return to exit..."
     Console.ReadLine () |> ignore
