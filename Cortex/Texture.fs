@@ -39,37 +39,30 @@ module private __ =
 
 open __
 
-type Texture =
+type Texture2D (asset) =
 
-    val mutable texInfo : GLKTextureInfo
-    val asset : string
-    val mutable observer : IDisposable
+    let mutable texInfo = stub
 
-    new (asset) as this =
-        {
-        texInfo = stub
-        asset = asset
-        observer = null
-        }
-        then
-            let png = Asset.observe (asset + ".png")
-            let jpg = Asset.observe (asset + ".jpg")
-            this.observer <- Observable.merge png jpg
-            |> Observable.subscribe (onAsset asset (fun tex ->
-                this.Release ()
-                this.texInfo <- tex
-                GL.BindTexture (TextureTarget.Texture2D, this.texInfo.Name)
-                setup ()))
+    let Release () =
+        if texInfo <> stub then
+            GL.DeleteTexture texInfo.Name
+            texInfo.Dispose ()
+            texInfo <- stub
 
-    member this.Release () =
-        if this.texInfo <> stub then
-            GL.DeleteTexture this.texInfo.Name
-            this.texInfo.Dispose ()
-            this.texInfo <- stub
+    let png = Asset.observe (asset + ".png")
+    let jpg = Asset.observe (asset + ".jpg")
+    let observer =
+        Observable.merge png jpg
+        |> Observable.subscribe (onAsset asset (fun tex ->
+            Release ()
+            texInfo <- tex
+            GL.BindTexture (TextureTarget.Texture2D, texInfo.Name)
+            setup ()))
 
-    member this.Bind () = GL.BindTexture (TextureTarget.Texture2D, this.texInfo.Name)
+    member this.Bind () = GL.BindTexture (TextureTarget.Texture2D, texInfo.Name)
+    member this.Unbind () = GL.BindTexture (TextureTarget.Texture2D, 0)
 
     interface IDisposable with
         member this.Dispose () =
-            this.observer.Dispose ()
-            this.Release ()
+            observer.Dispose ()
+            Release ()

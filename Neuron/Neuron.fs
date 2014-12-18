@@ -4,19 +4,21 @@ open System
 open System.Collections
 open System.Collections.Generic
 
+
+
 module private __ =
 
-    type __<'T> () =
-        static let __ = Dictionary<string,Event<'T>> ()
+    type __<'Service,'MsgType when 'Service : equality> () =
+        static let __ = Dictionary<'Service,Event<'MsgType>> ()
         static member Dict () = __
 
-    let get<'T> axon =
-        let axons = __<'T>.Dict ()
+    let get<'Service,'MsgType when 'Service : equality> axon =
+        let axons = __<'Service,'MsgType>.Dict ()
         let (hasKey, observable) = axons.TryGetValue axon
         if hasKey then
             observable
         else
-            let observable = Event<'T> ()
+            let observable = Event<'MsgType> ()
             axons.[axon] <- observable
             observable
 
@@ -24,9 +26,9 @@ open __
 
 module Axon =
 
-    let observe<'T> path =
-        (get<'T> path).Publish
+    let observe<'Service,'MsgType when 'Service : equality> path =
+        (get<'Service,'MsgType> path).Publish
 
-    let trigger<'T> path msg =
-        (get<'T> path).Trigger msg
+    let trigger<'Service,'MsgType when 'Service : equality> path msg =
+        (get<'Service,'MsgType> path).Trigger msg
 

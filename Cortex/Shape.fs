@@ -20,51 +20,47 @@ module private __ =
 
 open __
     
-type Mesh =
+type Mesh (asset) =
 
-    val mutable vbos : int array
-    val mutable count : int
-    val mutable tex : Texture.Texture
-    val mutable observer : IDisposable
+    let mutable count = 0
 
-    new (filename) as this =
-        {
-        vbos = [|0; 0; 0; 0;|]
-        count = 0
-        tex = new Texture.Texture (filename)
-        observer = null
-        }
-        then
-            let v = Asset.observe (filename + ".verts")
-            let c = Asset.observe (filename + ".colors")
-            let u = Asset.observe (filename + ".uvs")
-            let t = Asset.observe (filename + ".tris")
+    let vbos = [|0; 0; 0; 0;|]
 
-            let obs = observe {
-                let z0 = Observable.zipWith (fun c v -> (c, v)) v c
-                let z1 = Observable.zipWith (fun u (c,v) -> (u, c, v)) u z0
-                return! Observable.zipWith (fun t (u,v,c) -> (t, u, v, c)) t z1}
+    let v = Asset.observe (asset + ".verts")
+    let c = Asset.observe (asset + ".colors")
+    let u = Asset.observe (asset + ".uvs")
+    let t = Asset.observe (asset + ".tris")
 
-            this.observer <- obs
-            |> Observable.subscribe (fun (t, u, v, c) ->
-                GL.DeleteBuffers (4, this.vbos)
-                this.vbos <- [|0; 0; 0; 0;|]
-                GL.GenBuffers (4, this.vbos)
-                this.count <- int t.Length / sizeof<int>
-                buffer BufferTarget.ArrayBuffer v this.vbos.[0]
-                buffer BufferTarget.ArrayBuffer c this.vbos.[1]
-                buffer BufferTarget.ArrayBuffer u this.vbos.[2]
-                buffer BufferTarget.ElementArrayBuffer t this.vbos.[3])
+    let obs = observe {
+        let z = Observable.zipWith (fun c v -> (c, v)) v c
+        let z = Observable.zipWith (fun u (c,v) -> (u, c, v)) u z
+        return! Observable.zipWith (fun t (u,v,c) -> (t, u, v, c)) t z}
 
-    member this.VBOs = this.vbos
-    member this.Tex = this.tex
+    let observer =
+        obs
+        |> Observable.subscribe (fun (t, u, v, c) ->
+            GL.DeleteBuffers (4, vbos)
+            Array.Clear (vbos, 0, 4)
+            GL.GenBuffers (4, vbos)
+            count <- int t.Length / sizeof<int>
+            buffer BufferTarget.ArrayBuffer v vbos.[0]
+            buffer BufferTarget.ArrayBuffer c vbos.[1]
+            buffer BufferTarget.ArrayBuffer u vbos.[2]
+            buffer BufferTarget.ElementArrayBuffer t vbos.[3])
+
+    member this.VBOs = vbos
+
+    member this.BindBuffers () =
+        GL.BindBuffer (BufferTarget.ElementArrayBuffer, vbos.[3])
+
+    member this.UnbindBuffers () =
+        GL.BindBuffer (BufferTarget.ElementArrayBuffer, 0)
 
     member this.Draw () =
-        GL.BindBuffer (BufferTarget.ElementArrayBuffer, this.vbos.[3])
-        GL.DrawElements (BeginMode.Triangles, this.count, DrawElementsType.UnsignedInt, IntPtr.Zero)
+        GL.DrawElements (BeginMode.Triangles, count, DrawElementsType.UnsignedInt, IntPtr.Zero)
 
     interface IDisposable with
         member this.Dispose () =
-            this.observer.Dispose ()
-            GL.DeleteBuffers (4, this.vbos)
-            this.vbos <- [|0; 0; 0; 0;|]
+            observer.Dispose ()
+            GL.DeleteBuffers (4, vbos)
+            Array.Clear (vbos, 0, 4)

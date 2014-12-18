@@ -123,7 +123,7 @@ type Vybe =
             GL.EnableVertexAttribArray this.uv
         | _ -> ()
 
-    member this.Attribs (vbos:int array) =
+    member this.BindBuffers (vbos:int array) =
         match this.progShader with
         | LinkedProgShader _ ->
             GL.BindBuffer (BufferTarget.ArrayBuffer, vbos.[0])
@@ -134,5 +134,11 @@ type Vybe =
 
             GL.BindBuffer (BufferTarget.ArrayBuffer, vbos.[2])
             GL.VertexAttribPointer (this.uv, 2, VertexAttribPointerType.Float, false, sizeof<single>*2, 0)
+        | _ -> ()
+
+    member this.UnbindBuffers () =
+        match this.progShader with
+        | LinkedProgShader _ ->
+            GL.BindBuffer (BufferTarget.ArrayBuffer, 0)
         | _ -> ()
 

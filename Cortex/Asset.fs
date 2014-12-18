@@ -35,20 +35,20 @@ let fetch asset = async {
     if length > 0 then
         let! buffer = Atom.Util.readToEnd stream
         do! Async.SwitchToContext mainContext
-        Axon.trigger<byte array> ("asset/changed:" + asset) buffer }
+        Axon.trigger ("asset/changed:" + asset) buffer }
 
 let observe asset : IEvent<byte array> =
     Async.Start (fetch asset)
-    Axon.observe<unit> ("fswatch:" + asset)
+    Axon.observe ("fswatch:" + asset)
     |> Observable.add (fun () -> Async.Start (fetch asset))
-    Axon.observe<byte array> ("asset/changed:" + asset)
+    Axon.observe ("asset/changed:" + asset)
 
 let watching = async {
     let ws = new WebSocket ("ws://localhost:8081/asset")
 //    let ws = new WebSocket ("ws://192.168.4.110:8081/asset")
     ws.OnMessage
     |> Observable.add (fun (msg) ->
-        Axon.trigger<unit> msg.Data ())
+        Axon.trigger msg.Data ())
     ws.ConnectAsync ()
     while ws.IsAlive do
         ws.Ping () |> ignore

@@ -14,6 +14,7 @@ open Cortex.Generator
 open FSharp.Control.Reactive
 open System.Reactive.Linq
 open Atom
+open Neuron
 
 
 [<Register("QGLController")>]
@@ -74,10 +75,11 @@ type QGLController =
             Matrix4.CreatePerspectiveFieldOfView (
                 45.f * (float32(Math.PI)/180.f), float32(size.Width) / float32(size.Height), 0.3f, 1000.f)
 
-        this.mario <- Mario.actor this.deltaTime.Publish view proj
+        this.mario <- Mario.actor view proj
 
     override this.Update () =
-        this.deltaTime.Trigger (single this.TimeSinceFirstResume)
+        Axon.trigger Mario.DeltaTimeEvent (single this.TimeSinceFirstResume)
+        //this.deltaTime.Trigger (single this.TimeSinceFirstResume)
 
     member this.Draw (args : GLKViewDrawEventArgs) =
 

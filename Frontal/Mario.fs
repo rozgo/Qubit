@@ -2,10 +2,14 @@
 
 open Atom
 open Cortex
+open Neuron
 open OpenTK
 open OpenTK.Graphics.ES30
 open System
 open FSharp.Control.Reactive
+
+type FrontalEvents =
+    | DeltaTimeEvent
 
 type ObservableProperty<'T> (obs:IObservable<'T>, initial:'T) =
     let mutable property = initial
@@ -16,42 +20,46 @@ type ObservableProperty<'T> (obs:IObservable<'T>, initial:'T) =
     
 let render = new RenderBuilder.Builder ()
 
-let state r = RenderBuilder.State (fun f -> r(); f ())
+let def r = RenderBuilder.State (fun f -> r(); f ())
 
-let texture (tex:Texture.Texture) = state (fun () ->
+let bindTexture (tex:Texture.Texture2D) = RenderBuilder.State (fun interlude ->
     GL.ActiveTexture (TextureUnit.Texture0)
-    tex.Bind ())
+    tex.Bind ()
+    interlude ()
+    tex.Unbind ())
 
 let vybe = Shader.Vybe ()
-let prog = state (fun () -> vybe.Use)
 
-let shape (mesh:Shape.Mesh) = state (fun () -> 
-    vybe.Attribs mesh.VBOs
-    mesh.Draw ())
+let bindBuffers (mesh:Shape.Mesh) = RenderBuilder.State (fun interlude ->
+    vybe.BindBuffers mesh.VBOs
+    mesh.BindBuffers ()
+    interlude ()
+    mesh.UnbindBuffers ()
+    vybe.UnbindBuffers ())
 
-let actor dt view proj =
+let draw (mesh:Shape.Mesh) = RenderBuilder.State (fun interlude ->
+    mesh.Draw ()
+    interlude ())
 
-    let animation = Observable.map (fun dt -> Matrix4.CreateRotationY dt) dt
+let actor view proj =
 
+    let animation = Observable.map (fun dt -> Matrix4.CreateRotationY dt) (Axon.observe DeltaTimeEvent)
     let model = new ObservableProperty<Matrix4> (animation, Matrix4.Identity)
-
-    let model = state (fun () -> vybe.Model model.Value)
-    let view  = state (fun () -> vybe.View view)
-    let proj  = state (fun () -> vybe.Proj proj)
 
     let parts = ["Mario/FitMario_BodyB"; "Mario/FitMario_BodyA"; "Mario/FitMario_EyeDmg"; "Mario/FitMario_Kage"]
 
     let meshes = List.fold (fun meshes part -> 
-        new Shape.Mesh (part) :: meshes ) [] parts
+        (new Shape.Mesh (part), new Texture.Texture2D (part)) :: meshes ) [] parts
 
     render {
 
-        let! s = prog
-        let! m = model
-        let! v = view
-        let! p = proj
+        let! prog = def (fun () -> vybe.Use)
+        let! model = def (fun () -> vybe.Model model.Value)
+        let! view = def (fun () -> vybe.View view)
+        let! proj = def (fun () -> vybe.Proj proj)
 
-        for mesh in meshes do
-            let! t = texture mesh.Tex
-            return! shape mesh
+        for (mesh, tex) in meshes do
+            let! t = bindTexture tex
+            let! b = bindBuffers mesh
+            return! draw mesh
     }

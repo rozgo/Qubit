@@ -166,5 +166,13 @@
       <Project>{A5543105-1977-4323-8A9E-96A1CFE64869}</Project>
       <Name>Atom</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Neuron\Neuron.fsproj">
+      <Project>{B876D99F-1975-4322-82F5-EAC1B7423922}</Project>
+      <Name>Neuron</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Signal\Signal.fsproj">
+      <Project>{79DEC74E-FD46-43A2-ABE5-E796293DCD2C}</Project>
+      <Name>Signal</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>
