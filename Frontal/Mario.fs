@@ -21,7 +21,7 @@ let render = new RenderBuilder.Builder ()
 
 let def r = RenderBuilder.State (fun f -> r(); f ())
 
-let bindTexture (tex:Texture.Texture2D) = RenderBuilder.State (fun interlude ->
+let texture (tex:Texture.Texture2D) = RenderBuilder.State (fun interlude ->
     GL.ActiveTexture (TextureUnit.Texture0)
     tex.Bind ()
     interlude ()
@@ -29,7 +29,7 @@ let bindTexture (tex:Texture.Texture2D) = RenderBuilder.State (fun interlude ->
 
 let vybe = Shader.Vybe ()
 
-let bindBuffers (mesh:Shape.Mesh) = RenderBuilder.State (fun interlude ->
+let shape (mesh:Shape.Mesh) = RenderBuilder.State (fun interlude ->
     vybe.BindBuffers mesh.VBOs
     mesh.BindBuffers ()
     interlude ()
@@ -40,9 +40,16 @@ let draw (mesh:Shape.Mesh) = RenderBuilder.State (fun interlude ->
     mesh.Draw ()
     interlude ())
 
+let state f = RenderBuilder.State (fun interlude ->
+    f ()
+    interlude ())
+
 let actor view proj =
 
-    let animation = Observable.map (fun dt -> Matrix4.CreateRotationY dt) (Axon.observe DeltaTimeEvent)
+    let animation =
+        Axon.observe DeltaTimeEvent
+        |> Observable.map (fun dt -> Matrix4.CreateRotationY dt)
+
     let model = new ObservableProperty<Matrix4> (animation, Matrix4.Identity)
 
     let parts = ["Mario/FitMario_BodyB"; "Mario/FitMario_BodyA"; "Mario/FitMario_EyeDmg"; "Mario/FitMario_Kage"]
@@ -50,15 +57,20 @@ let actor view proj =
     let meshes = List.fold (fun meshes part -> 
         (new Shape.Mesh (part), new Texture.Texture2D (part)) :: meshes ) [] parts
 
+    let shader = vybe
+
+    let properties () = 
+        shader.Use
+        shader.Model model.Value
+        shader.View view
+        shader.Proj proj
+
     render {
 
-        let! prog = def (fun () -> vybe.Use)
-        let! model = def (fun () -> vybe.Model model.Value)
-        let! view = def (fun () -> vybe.View view)
-        let! proj = def (fun () -> vybe.Proj proj)
+        let! s = state properties
 
         for (mesh, tex) in meshes do
-            let! t = bindTexture tex
-            let! b = bindBuffers mesh
+            let! t = texture tex
+            let! b = shape mesh
             return! draw mesh
     }

@@ -1,7 +1,6 @@
 ﻿module Atom.Axon
 
 open System
-open System.Collections
 open System.Collections.Generic
 
 module private __ =
@@ -27,5 +26,3 @@ let observe<'MsgName,'MsgType when 'MsgName : equality> path =
 
 let trigger<'MsgName,'MsgType when 'MsgName : equality> path msg =
     (get<'MsgName,'MsgType> path).Trigger msg
-
-
