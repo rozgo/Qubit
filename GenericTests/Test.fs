@@ -11,6 +11,24 @@ open FSharp.Control.Reactive
 
 open NUnit.Framework
 
+type SM<'State, 'a> = SM of ('State -> 'a * 'State)
+
+type StateBuilder () = 
+
+  member x.Bind (SM c1, fc2) = 
+    SM (
+      fun s0 -> 
+        let (r, s1) = c1 s0
+        let (SM c2) = fc2 r
+        c2 s1)
+
+  member x.Return k = SM (fun s -> (k, s))
+
+  member x.ReturnFrom (SM k) = SM k
+
+  member x.Combine (m, k) =
+     x.Bind (m, fun _ -> k)
+
 
 [<TestFixture>]
 
@@ -110,3 +128,32 @@ type Test() =
 
         Thread.Sleep 3000
 
+    [<Test>]
+    member x.StateMonad () = 
+
+        let readSM = SM (fun s -> (s, s))
+
+        let updateSM f = SM (fun s -> (), f s)
+
+        let runSM s0 (SM c) = c s0
+
+        let stateBuilder = StateBuilder()
+
+        let debugState label = 
+          SM (
+            fun __ -> 
+              printfn "Set: %A" label 
+              printfn "Unset: %A" label
+              (), __
+            )
+
+        stateBuilder {
+          let! dc = debugState "drawCall"
+          let! shader = debugState "shader"
+          let! color = debugState "color"
+          return ()
+        }
+        |> runSM ()
+        |> ignore
+
+        Assert.Fail()

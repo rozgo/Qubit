@@ -145,6 +145,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="WebFront.fs" />
+    <Compile Include="Mario.fs" />
     <Compile Include="QGLController.fs" />
     <Compile Include="AppDelegate.fs" />
   </ItemGroup>
@@ -160,6 +161,10 @@
     <ProjectReference Include="..\Cortex\Cortex.fsproj">
       <Project>{BA48A05D-EFDB-499A-ADD6-CEC499C0C6E2}</Project>
       <Name>Cortex</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Atom\Atom.fsproj">
+      <Project>{A5543105-1977-4323-8A9E-96A1CFE64869}</Project>
+      <Name>Atom</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

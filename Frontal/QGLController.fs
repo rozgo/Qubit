@@ -13,31 +13,28 @@ open OpenTK.Graphics.ES30
 open Cortex.Generator
 open FSharp.Control.Reactive
 open System.Reactive.Linq
+open Atom
 
-type Actor =
-    {
-    meshes : Shape.Mesh list
-    offset : Vector3
-    }
 
 [<Register("QGLController")>]
 type QGLController =
     inherit GLKViewController
 
     val mutable context : EAGLContext
-    val mutable shader : Shader.Vybe option
-    val mutable actors : Map<string,Actor>
-    val mutable fingers : int array
-    val mutable touches : Event<Touch.Touch>
+    val mutable mario : RenderBuilder.State
+    val fingers : int array
+    val touches : Event<Touch.Touch>
+    val deltaTime : Event<single>
+    //val mutable
 
     new (frame) as this =
         {
         inherit GLKViewController ()
         context = null
-        shader = None
-        actors = Map.empty
+        mario = RenderBuilder.empty
         fingers = [| 0; 0; 0; 0; 0; |]
         touches = new Event<Touch.Touch> ()
+        deltaTime = new Event<single> ()
         }
         then
             this.View.Frame <- frame
@@ -66,20 +63,6 @@ type QGLController =
         this.touches.Publish |> Observable.add (printfn "%A")
 
         EAGLContext.SetCurrentContext this.context |> ignore
-        this.LoadShaders ()
-
-        this.LoadActors ()
-
-    override this.Update () =
-        ()
-
-    member this.Draw (args : GLKViewDrawEventArgs) =
-
-        GL.ClearColor (0.f,0.f,1.f,1.f)
-        GL.Clear (ClearBufferMask.ColorBufferBit ||| ClearBufferMask.DepthBufferBit)
-
-        GL.Enable EnableCap.DepthTest
-        GL.Enable EnableCap.CullFace
 
         let size = this.View.Frame.Size
 
@@ -91,34 +74,20 @@ type QGLController =
             Matrix4.CreatePerspectiveFieldOfView (
                 45.f * (float32(Math.PI)/180.f), float32(size.Width) / float32(size.Height), 0.3f, 1000.f)
 
-//        this.transY <- this.transY + 0.01f;
+        this.mario <- Mario.actor this.deltaTime.Publish view proj
 
-        for kv in this.actors do
+    override this.Update () =
+        this.deltaTime.Trigger (single this.TimeSinceFirstResume)
 
-            let actor = kv.Value
+    member this.Draw (args : GLKViewDrawEventArgs) =
 
-            match this.shader with
-            | Some prog ->
+        GL.ClearColor (0.f,0.f,1.f,1.f)
+        GL.Clear (ClearBufferMask.ColorBufferBit ||| ClearBufferMask.DepthBufferBit)
 
-                prog.Use
+        GL.Enable EnableCap.DepthTest
+        GL.Enable EnableCap.CullFace
 
-                prog.Model (model * (Matrix4.CreateTranslation (actor.offset)))
-                prog.View view
-                prog.Proj proj
-
-                for mesh in actor.meshes do
-
-                    GL.ActiveTexture (TextureUnit.Texture0)
-                    mesh.tex.Bind ()
-                    prog.Chan0 0
-                    prog.Attribs mesh.VBOs
-
-                    mesh.Draw ()
-
-            | None -> ()
-
-    member this.LoadShaders () =
-        this.shader <- Some (Shader.Vybe ())
+        RenderBuilder.draw this.mario
 
     member this.PushTouches (touches:NSSet) phase =
         let touches = touches.ToArray<UITouch> ()
@@ -154,16 +123,16 @@ type QGLController =
         base.TouchesCancelled (touches, evt)
         this.PushTouches touches Touch.Cancelled
 
-    member this.LoadActors () =
-        let watch name position =
-            let format = name + "/%s"
-            let name = Printf.StringFormat<string -> string> format
-            Asset.observe (sprintf name "names.list")
-            |> Observable.add (fun data ->
-                let names = Text.Encoding.ASCII.GetString data
-                let names = names.Split ([|Environment.NewLine|], StringSplitOptions.None)
-                let meshes = Array.fold (fun meshes mesh -> (new Shape.Mesh (sprintf name mesh)) :: meshes) [] names
-                let actor = {meshes = meshes; offset = position}
-                this.actors <- Map.add (sprintf name "actor") actor this.actors)
-        watch "Link" (Vector3(3.f,0.f,0.f))
-        watch "Mario" (Vector3(-3.f,0.f,0.f))
+//    member this.LoadActors () =
+//        let watch name position =
+//            let format = name + "/%s"
+//            let name = Printf.StringFormat<string -> string> format
+//            Asset.observe (sprintf name "names.list")
+//            |> Observable.add (fun data ->
+//                let names = Text.Encoding.ASCII.GetString data
+//                let names = names.Split ([|Environment.NewLine|], StringSplitOptions.None)
+//                let meshes = Array.fold (fun meshes mesh -> (new Shape.Mesh (sprintf name mesh)) :: meshes) [] names
+//                let actor = {meshes = meshes; offset = position}
+//                this.actors <- Map.add (sprintf name "actor") actor this.actors)
+//        watch "Link" (Vector3(3.f,0.f,0.f))
+//        watch "Mario" (Vector3(-3.f,0.f,0.f))

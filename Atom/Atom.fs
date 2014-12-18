@@ -1,4 +1,4 @@
-﻿module Atom
+﻿module Atom.Util
 
 open System
 open System.IO

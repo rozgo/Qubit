@@ -118,6 +118,7 @@
     <None Include="Info.plist" />
     <None Include="Entitlements.plist" />
     <Compile Include="SignalTest.fs" />
+    <Compile Include="RenderBuilderTest.fs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="UnitTestAppDelegate.fs" />
@@ -127,6 +128,10 @@
     <ProjectReference Include="..\Signal\Signal.fsproj">
       <Project>{79DEC74E-FD46-43A2-ABE5-E796293DCD2C}</Project>
       <Name>Signal</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Atom\Atom.fsproj">
+      <Project>{A5543105-1977-4323-8A9E-96A1CFE64869}</Project>
+      <Name>Atom</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

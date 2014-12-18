@@ -23,7 +23,7 @@ let request asset = async {
     let! response = request.AsyncGetResponse ()
     let stream = response.GetResponseStream ()
     let length = (int response.ContentLength)
-    let! buffer = Atom.readToEnd stream
+    let! buffer = Atom.Util.readToEnd stream
     return buffer }
 
 let fetch asset = async {
@@ -33,7 +33,7 @@ let fetch asset = async {
     let stream = response.GetResponseStream ()
     let length = (int response.ContentLength)
     if length > 0 then
-        let! buffer = Atom.readToEnd stream
+        let! buffer = Atom.Util.readToEnd stream
         do! Async.SwitchToContext mainContext
         Axon.trigger<byte array> ("asset/changed:" + asset) buffer }
 
