@@ -25,36 +25,11 @@ let combine a b =
 let empty = State (fun f -> f ())
 
 type Builder () = 
-    member inline x.Return v = ret v
-    member inline x.ReturnFrom v = v
-    member inline x.Bind (s, f) = bind f s
-    member inline x.Combine (a, b) = combine a b
-    member inline x.Delay f = f ()
-
-    member this.Zero () = 
-        this.Return (fun f -> f ())
-
-//    member this.While(guard, body) =
-//        if not (guard()) 
-//        then this.Zero() 
-//        else this.Bind( body(), fun () -> 
-//            this.While(guard, body))  
-//
-//    member this.TryWith(body, handler) =
-//        try this.ReturnFrom(body())
-//        with e -> handler e
-//
-//    member this.TryFinally(body, compensation) =
-//        try this.ReturnFrom(body())
-//        finally compensation() 
-//
-//    member this.Using(disposable:#System.IDisposable, body) =
-//        let body' = fun () -> body disposable
-//        this.TryFinally(body', fun () -> 
-//            match disposable with 
-//                | null -> () 
-//                | disp -> disp.Dispose())
-
-    member x.For(sequence:seq<_>, body) =
-        let combine a b = x.Combine(a, body b)
-        Seq.fold combine (x.Zero()) sequence
+    member x.Return v = ret v
+    member x.ReturnFrom v = v
+    member x.Bind (s, f) = bind f s
+    member x.Combine (a, b) = combine a b
+    member x.Delay f = f ()
+    member x.Zero () = x.Return (fun f -> f ())
+    member x.For (sequence:seq<_>, body) =
+        Seq.fold (fun a b -> combine a (body b)) (x.Zero ()) sequence
