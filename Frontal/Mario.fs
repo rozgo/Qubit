@@ -2,7 +2,6 @@
 
 open Atom
 open Cortex
-open Neuron
 open OpenTK
 open OpenTK.Graphics.ES30
 open System

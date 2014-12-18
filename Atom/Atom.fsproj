@@ -33,8 +33,9 @@
     <Tailcalls>true</Tailcalls>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Atom.fs" />
     <Compile Include="RenderBuilder.fs" />
+    <Compile Include="Axon.fs" />
+    <Compile Include="Util.fs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.FSharp.targets" />
   <ItemGroup>

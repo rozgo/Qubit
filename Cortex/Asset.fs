@@ -6,7 +6,7 @@ open System.Threading
 open System.IO
 open System.Net
 open WebSocketSharp
-open Neuron
+open Atom
 
 module private __ =
 

@@ -14,7 +14,6 @@ open Cortex.Generator
 open FSharp.Control.Reactive
 open System.Reactive.Linq
 open Atom
-open Neuron
 
 
 [<Register("QGLController")>]
