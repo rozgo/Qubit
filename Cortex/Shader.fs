@@ -6,6 +6,7 @@ open OpenTK.Graphics.ES30
 open Foundation
 open Cortex.Renderer
 open FSharp.Control.Reactive
+open Atom
 
 module private __ =
 
@@ -30,114 +31,127 @@ module private __ =
 
 open __
 
-type Vybe =
+module X =
 
-    val position : int
-    val color : int
-    val uv : int
+    type AttribName = AttribName of string
+    type AttribLocation = AttribLocation of int
+    type Attrib = AttribName * AttribLocation
 
-    val mutable model : int
-    val mutable view : int
-    val mutable proj : int
-    val mutable chan0 : int
+    type UniformName = UniformName of string
+    type UniformLocation = UniformLocation of int
+    type Uniform = UniformName * UniformLocation
 
-    val mutable vertShader : VertShader
-    val mutable fragShader : FragShader
-    val mutable progShader : ProgShader
+    type VertexAttrib =
+        | Position
+        | Color
+        | UV
 
-    new () as this =
-        {
-            position = 0
-            color = 1
-            uv = 2
-            model = 0
-            view = 0
-            proj = 0
-            chan0 = 0
-            vertShader = FailedVertShader NoShaderInfo
-            fragShader = FailedFragShader NoShaderInfo
-            progShader = FailedProgShader NoShaderInfo
-        }
-        then
+    type Shader = {
+        attributes : Attrib list
+        uniforms : Uniform list }
 
-            let Bind progId =
-                GL.BindAttribLocation (progId, this.position, "position")
-                GL.BindAttribLocation (progId, this.color, "color")
-                GL.BindAttribLocation (progId, this.uv, "uv")
+type Vybe () =
 
-            let vs =
-                Asset.observe ("Shaders/Vybe.vsh")
-                |> Observable.map binToAscii
+    let position = 0
+    let color = 1
+    let uv = 2
 
-            let fs =
-                Asset.observe ("Shaders/Vybe.fsh")
-                |> Observable.map binToAscii
+    let mutable model = 0
+    let mutable view = 0
+    let mutable proj = 0
+    let mutable chan0 = 0
 
-            Observable.zip vs fs
-            |> Observable.add (fun (vs,fs) ->
-                this.vertShader <- VertShader vs
-                this.fragShader <- FragShader fs
-                this.progShader <- ProgShader this.vertShader this.fragShader Bind
-                match this.progShader with
-                | LinkedProgShader _ ->
-                    this.model <- GetUniformLocation this.progShader "model"
-                    this.view <- GetUniformLocation this.progShader "view"
-                    this.proj <- GetUniformLocation this.progShader "proj"
-                    this.chan0 <- GetUniformLocation this.progShader "chan0"
-                | _ ->
-                    printfn "%A" this.vertShader
-                    printfn "%A" this.fragShader
-                    printfn "%A" this.progShader
-                )
+    let mutable vertShader = FailedVertShader NoShaderInfo
+    let mutable fragShader = FailedFragShader NoShaderInfo
+    let mutable progShader = FailedProgShader NoShaderInfo
+
+    let bind progId =
+        GL.BindAttribLocation (progId, position, "position")
+        GL.BindAttribLocation (progId, color, "color")
+        GL.BindAttribLocation (progId, uv, "uv")
+
+    let vsPath = "Shaders/Vybe.vsh"
+    let fsPath = "Shaders/Vybe.fsh"
+
+    let vs =
+        Asset.observe vsPath
+        |> Observable.map binToAscii
+
+    let fs =
+        Asset.observe fsPath
+        |> Observable.map binToAscii
+
+    let observer =
+        Observable.zip vs fs
+        |> Observable.subscribe (fun (vs,fs) ->
+            vertShader <- VertShader vs
+            fragShader <- FragShader fs
+            progShader <- ProgShader vertShader fragShader bind
+            match progShader with
+            | LinkedProgShader _ ->
+                model <- GetUniformLocation progShader "model"
+                view <- GetUniformLocation progShader "view"
+                proj <- GetUniformLocation progShader "proj"
+                chan0 <- GetUniformLocation progShader "chan0"
+            | _ -> validate vertShader fragShader progShader vsPath fsPath |> ignore)
 
     member this.Model value =
-        match this.progShader with
+        match progShader with
         | LinkedProgShader _ ->
-            GL.UniformMatrix4 (this.model, false, ref value)
+            GL.UniformMatrix4 (model, false, ref value)
         | _ -> ()
 
     member this.View value =
-        match this.progShader with
+        match progShader with
         | LinkedProgShader _ ->
-            GL.UniformMatrix4 (this.view, false, ref value)
+            GL.UniformMatrix4 (view, false, ref value)
         | _ -> ()
 
     member this.Proj value =
-        match this.progShader with
+        match progShader with
         | LinkedProgShader _ ->
-            GL.UniformMatrix4 (this.proj, false, ref value)
+            GL.UniformMatrix4 (proj, false, ref value)
         | _ -> ()
 
     member this.Chan0 (value:int) =
-        match this.progShader with
+        match progShader with
         | LinkedProgShader _ ->
-            GL.Uniform1 (this.chan0, value)
+            GL.Uniform1 (chan0, value)
         | _ -> ()
 
-    member this.Use =
-        match this.progShader with
+    member this.Bind () =
+        match progShader with
         | LinkedProgShader (ProgShaderObject (ProgShaderId glId), _) ->
             GL.UseProgram glId
-            GL.EnableVertexAttribArray this.position
-            GL.EnableVertexAttribArray this.color
-            GL.EnableVertexAttribArray this.uv
+            GL.EnableVertexAttribArray position
+            GL.EnableVertexAttribArray color
+            GL.EnableVertexAttribArray uv
+        | _ -> ()
+
+    member this.Unbind () =
+        match progShader with
+        | LinkedProgShader (ProgShaderObject (ProgShaderId glId), _) ->
+            GL.UseProgram 0
+            GL.DisableVertexAttribArray position
+            GL.DisableVertexAttribArray color
+            GL.DisableVertexAttribArray uv
         | _ -> ()
 
     member this.BindBuffers (vbos:int array) =
-        match this.progShader with
+        match progShader with
         | LinkedProgShader _ ->
             GL.BindBuffer (BufferTarget.ArrayBuffer, vbos.[0])
-            GL.VertexAttribPointer (this.position, 3, VertexAttribPointerType.Float, false, sizeof<single>*3, 0)
+            GL.VertexAttribPointer (position, 3, VertexAttribPointerType.Float, false, sizeof<single>*3, 0)
 
             GL.BindBuffer (BufferTarget.ArrayBuffer, vbos.[1])
-            GL.VertexAttribPointer (this.color, 4, VertexAttribPointerType.Float, false, sizeof<single>*4, 0)
+            GL.VertexAttribPointer (color, 4, VertexAttribPointerType.Float, false, sizeof<single>*4, 0)
 
             GL.BindBuffer (BufferTarget.ArrayBuffer, vbos.[2])
-            GL.VertexAttribPointer (this.uv, 2, VertexAttribPointerType.Float, false, sizeof<single>*2, 0)
+            GL.VertexAttribPointer (uv, 2, VertexAttribPointerType.Float, false, sizeof<single>*2, 0)
         | _ -> ()
 
     member this.UnbindBuffers () =
-        match this.progShader with
+        match progShader with
         | LinkedProgShader _ ->
             GL.BindBuffer (BufferTarget.ArrayBuffer, 0)
         | _ -> ()

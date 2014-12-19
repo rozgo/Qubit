@@ -69,7 +69,7 @@ type QGLController =
         let model = Matrix4.CreateRotationY ((single this.TimeSinceFirstResume) * 1.f)//80.0f//this.transY
 
         //let view = Matrix4.LookAt (-10.f,5.f,-10.f,0.f,0.f,0.f,0.f,1.f,0.f)
-        let view = Matrix4.LookAt (0.f,4.f,-20.f,0.f,3.f,0.f,0.f,1.f,0.f)
+        let view = Matrix4.LookAt (0.f,4.f,-40.f,0.f,3.f,0.f,0.f,1.f,0.f)
         let proj =
             Matrix4.CreatePerspectiveFieldOfView (
                 45.f * (float32(Math.PI)/180.f), float32(size.Width) / float32(size.Height), 0.3f, 1000.f)

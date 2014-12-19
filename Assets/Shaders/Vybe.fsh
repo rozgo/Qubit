@@ -1,12 +1,17 @@
+#version 300 es
+
 precision highp float;
 
 uniform sampler2D chan0;
 
-varying vec4 colorVarying;
-varying vec2 uvVarying;
+in vec4 colorVarying;
+in vec2 uvVarying;
 
-void main()
+out vec4 finalColor;
+
+void main ()
 {
-	vec4 sample = texture2D(chan0, uvVarying);
-    gl_FragColor = sample;
+	vec4 sample = texture (chan0, uvVarying);
+    finalColor = sample;
 }
+

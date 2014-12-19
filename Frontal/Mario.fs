@@ -9,17 +9,8 @@ open FSharp.Control.Reactive
 
 type FrontalEvents =
     | DeltaTimeEvent
-
-type ObservableProperty<'T> (obs:IObservable<'T>, initial:'T) =
-    let mutable property = initial
-    let disposable = obs.Subscribe (fun x -> property <- x)
-    member this.Value = property
-    interface IDisposable with
-        member this.Dispose () = disposable.Dispose ()
     
 let render = new RenderBuilder.Builder ()
-
-let def r = RenderBuilder.State (fun f -> r(); f ())
 
 let texture (tex:Texture.Texture2D) = RenderBuilder.State (fun interlude ->
     GL.ActiveTexture (TextureUnit.Texture0)
@@ -27,14 +18,19 @@ let texture (tex:Texture.Texture2D) = RenderBuilder.State (fun interlude ->
     interlude ()
     tex.Unbind ())
 
-let vybe = Shader.Vybe ()
+let shader = Shader.Vybe ()
+
+let program = RenderBuilder.State (fun interlude ->
+    shader.Bind ()
+    interlude ()
+    shader.Unbind ())
 
 let shape (mesh:Shape.Mesh) = RenderBuilder.State (fun interlude ->
-    vybe.BindBuffers mesh.VBOs
+    shader.BindBuffers mesh.VBOs
     mesh.BindBuffers ()
     interlude ()
     mesh.UnbindBuffers ()
-    vybe.UnbindBuffers ())
+    shader.UnbindBuffers ())
 
 let draw (mesh:Shape.Mesh) = RenderBuilder.State (fun interlude ->
     mesh.Draw ()
@@ -50,23 +46,21 @@ let actor view proj =
         Axon.observe DeltaTimeEvent
         |> Observable.map (fun dt -> Matrix4.CreateRotationY dt)
 
-    let model = new ObservableProperty<Matrix4> (animation, Matrix4.Identity)
+    let model = Observable.property animation Matrix4.Identity
 
     let parts = ["Mario/FitMario_BodyB"; "Mario/FitMario_BodyA"; "Mario/FitMario_EyeDmg"; "Mario/FitMario_Kage"]
 
     let meshes = List.fold (fun meshes part -> 
         (new Shape.Mesh (part), new Texture.Texture2D (part)) :: meshes ) [] parts
-
-    let shader = vybe
-
+    
     let properties () = 
-        shader.Use
         shader.Model model.Value
         shader.View view
         shader.Proj proj
 
     render {
 
+        let! s = program
         let! s = state properties
 
         for (mesh, tex) in meshes do
