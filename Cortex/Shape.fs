@@ -57,7 +57,7 @@ type Mesh (asset) =
         GL.BindBuffer (BufferTarget.ElementArrayBuffer, 0)
 
     member this.Draw () =
-        GL.DrawElementsInstanced (PrimitiveType.Triangles, count, DrawElementsType.UnsignedInt, nativeint 0, 10)
+        GL.DrawElementsInstanced (PrimitiveType.Triangles, count, DrawElementsType.UnsignedInt, nativeint 0, 100)
 
     interface IDisposable with
         member this.Dispose () =

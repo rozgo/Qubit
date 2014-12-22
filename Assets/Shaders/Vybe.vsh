@@ -18,7 +18,7 @@ out vec2 uvVarying;
 
 void main ()
 {
-	float a = (float (gl_InstanceID) / 10.0) * 2.0 * PI;
+	float a = (float (gl_InstanceID) / 100.0) * 2.0 * PI;
 	float r = 6.0;
 	vec4 i = vec4 (r * cos(a), r * sin(a), 0.0, 0.0);
 	gl_Position = proj * view * model * (position + i);
