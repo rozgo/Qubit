@@ -14,10 +14,10 @@ type RemoteObservableTests () =
 
         let range = Observable.range 0 5
 
-        let remObserver = new Observable.RemoteObserver<int> (range, "range")
+        let remObserver = Observer.remote "range" range
 
-        let remObservable = new Observable.RemoteObservable<int> ("range")
+        let remObservable = Observable.remote "range"
 
-        remObservable.Observable
-        |> Observable.add (printfn "%A")
+        remObservable
+        |> Observable.add (printfn "%i")
 

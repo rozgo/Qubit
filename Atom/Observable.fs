@@ -1,6 +1,7 @@
-﻿module Atom.Observable
+﻿namespace Atom
 
 open System
+open System.Collections.Generic
 open FSharp.Control.Reactive
 open System.Reactive.Disposables
 
@@ -42,10 +43,6 @@ type Property<'T> (observable:IObservable<'T>, initial) =
             match disposable with
             | Some disposable -> disposable.Dispose ()
             | _ -> ()
-
-let property<'T> initial obs =
-    new Property<'T> (obs, initial)
-
 
 type RemoteObservable<'T> (channel) =
 
@@ -103,3 +100,33 @@ type RemoteObserver<'T> (observable:IObservable<'T>, channel) =
             | _ -> ()
             List.iter (fun (obs:IDisposable) -> obs.Dispose ()) disposables
             onCompleted ()
+
+module Observable =
+
+    let property<'T> initial obs =
+        new Property<'T> (obs, initial)
+
+    let remote channel = (new RemoteObservable<'T> (channel)).Observable
+
+module Observer =
+
+    module internal __ =
+
+        type __<'T> () =
+            static let __ = Dictionary<string, RemoteObserver<'T>> ()
+            static member Dict () = __
+
+        let get<'T> observable channel =
+            let axons = __<'T>.Dict ()
+            let (hasKey, observer) = axons.TryGetValue channel
+            if hasKey then
+                observer
+            else
+                let observer = new RemoteObserver<'T> (observable, channel)
+                axons.[channel] <- observer
+                observer
+
+    open __
+
+    let remote channel observable = get observable channel
+
