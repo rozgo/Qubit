@@ -128,5 +128,6 @@ module Observer =
 
     open __
 
-    let remote channel observable = get observable channel
+    let remote channel observable =
+        get observable channel |> ignore
 

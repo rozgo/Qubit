@@ -14,7 +14,7 @@ type RemoteObservableTests () =
 
         let range = Observable.range 0 5
 
-        let remObserver = Observer.remote "range" range
+        Observer.remote "range" range
 
         let remObservable = Observable.remote "range"
 
