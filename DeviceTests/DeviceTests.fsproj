@@ -110,6 +110,18 @@
     <Reference Include="System.Core" />
     <Reference Include="Xamarin.iOS" />
     <Reference Include="MonoTouch.NUnitLite" />
+    <Reference Include="FSharp.Control.Reactive">
+      <HintPath>..\Libs\FSharp.Control.Reactive.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Core">
+      <HintPath>..\Libs\System.Reactive.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Interfaces">
+      <HintPath>..\Libs\System.Reactive.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Linq">
+      <HintPath>..\Libs\System.Reactive.Linq.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
@@ -119,6 +131,7 @@
     <None Include="Entitlements.plist" />
     <Compile Include="SignalTest.fs" />
     <Compile Include="RenderBuilderTest.fs" />
+    <Compile Include="RemoteObservableTest.fs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="UnitTestAppDelegate.fs" />

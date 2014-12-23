@@ -46,7 +46,13 @@ let actor view proj =
         Axon.observe DeltaTimeEvent
         |> Observable.map (fun dt -> Matrix4.CreateRotationY dt)
 
-    let model = Observable.property animation Matrix4.Identity
+    let model = animation |> Observable.property Matrix4.Identity
+
+    model.Observable
+    |> Observable.add (printfn "%A")
+
+    model.Observable
+    |> Observable.add (printfn "%A")
 
     let parts = ["Mario/FitMario_BodyB"; "Mario/FitMario_BodyA"; "Mario/FitMario_EyeDmg"; "Mario/FitMario_Kage"]
 

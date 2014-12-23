@@ -115,45 +115,27 @@ type Test() =
     [<Test>]
     member x.``createWithDisposable`` () =
 
-//        let evt (obs:IObserver<int>) = async {
-//            do! Async.Sleep 1000
-//            obs.OnNext 1
-//            do! Async.Sleep 1000
-//            obs.OnNext 2
-//            do! Async.Sleep 1000
-//            obs.OnNext 3 }
-//
-//        let obs = Observable.createWithDisposable (fun obs -> obs.OnNext (1))
+        let obsA =
+            Observable.createWithDisposable (fun subscriber ->
+                printfn "subscribed to obsA"
+                subscriber.OnNext ("obsA says hi")
+                {new IDisposable with
+                     member x.Dispose () = printfn "obsA says bye"})
+
+        let obsB =
+            Observable.createWithDisposable (fun subscriber ->
+                printfn "subscribed to obsB"
+                subscriber.OnNext ("obsB says hi")
+                {new IDisposable with
+                     member x.Dispose () = printfn "obsB says bye"})
+
+
+        let a = obsA
+        let b = obsB
+
+        a
+        //|> b
+        |> Observable.add (printfn "%A")
 
 
         Thread.Sleep 3000
-
-    [<Test>]
-    member x.StateMonad () = 
-
-        let readSM = SM (fun s -> (s, s))
-
-        let updateSM f = SM (fun s -> (), f s)
-
-        let runSM s0 (SM c) = c s0
-
-        let stateBuilder = StateBuilder()
-
-        let debugState label = 
-          SM (
-            fun __ -> 
-              printfn "Set: %A" label 
-              printfn "Unset: %A" label
-              (), __
-            )
-
-        stateBuilder {
-          let! dc = debugState "drawCall"
-          let! shader = debugState "shader"
-          let! color = debugState "color"
-          return ()
-        }
-        |> runSM ()
-        |> ignore
-
-        Assert.Fail()
