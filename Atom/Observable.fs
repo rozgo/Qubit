@@ -47,9 +47,12 @@ type Property<'T> (observable:IObservable<'T>, initial) =
 type RemoteObservable<'T> (channel) =
 
     let mutable key = 0
+    let mutable state = None
     let mutable observers = Map.empty : Map<int,IObserver<'T>>
 
-    let onNext (v) = observers |> Seq.iter (fun (KeyValue(_,obs)) -> obs.OnNext v)
+    let onNext (v) =
+        state <- Some v
+        observers |> Seq.iter (fun (KeyValue(_,obs)) -> obs.OnNext v)
     let onCompleted () = observers |> Seq.iter (fun (KeyValue(_,obs)) -> obs.OnCompleted ())
     let onError (err) = observers |> Seq.iter (fun (KeyValue(_,obs)) -> obs.OnError err)
 
@@ -63,6 +66,9 @@ type RemoteObservable<'T> (channel) =
     member this.Observable = Observable.createWithDisposable (fun subscriber ->
         key <- key + 1
         observers <- Map.add key subscriber observers
+        match state with
+        | Some state -> subscriber.OnNext state
+        | _ -> ()
         Axon.trigger (channel + ":OnSubscribed") key
         {new IDisposable with
             member x.Dispose () =
