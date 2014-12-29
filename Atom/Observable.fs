@@ -109,10 +109,28 @@ type RemoteObserver<'T> (observable:IObservable<'T>, channel) =
 
 module Observable =
 
+    module internal __ =
+
+        type __<'T> () =
+            static let __ = Dictionary<string, RemoteObservable<'T>> ()
+            static member Dict () = __
+
+        let get<'T> channel =
+            let obs = __<'T>.Dict ()
+            let (hasKey, observable) = obs.TryGetValue channel
+            if hasKey then
+                observable
+            else
+                let observable = new RemoteObservable<'T> (channel)
+                obs.[channel] <- observable
+                observable
+
+    open __
+
     let property<'T> initial obs =
         new Property<'T> (obs, initial)
 
-    let remote channel = (new RemoteObservable<'T> (channel)).Observable
+    let remote channel = (get channel).Observable
 
 module Observer =
 
@@ -123,13 +141,13 @@ module Observer =
             static member Dict () = __
 
         let get<'T> observable channel =
-            let axons = __<'T>.Dict ()
-            let (hasKey, observer) = axons.TryGetValue channel
+            let obs = __<'T>.Dict ()
+            let (hasKey, observer) = obs.TryGetValue channel
             if hasKey then
                 observer
             else
                 let observer = new RemoteObserver<'T> (observable, channel)
-                axons.[channel] <- observer
+                obs.[channel] <- observer
                 observer
 
     open __
