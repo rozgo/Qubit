@@ -22,6 +22,7 @@ type QGLController =
 
     val mutable context : EAGLContext
     val mutable mario : RenderBuilder.State
+    val mutable curve : RenderBuilder.State
     val fingers : int array
     val touches : Event<Touch.Touch>
     val deltaTime : Event<single>
@@ -32,6 +33,7 @@ type QGLController =
         inherit GLKViewController ()
         context = null
         mario = RenderBuilder.empty
+        curve = RenderBuilder.empty
         fingers = [| 0; 0; 0; 0; 0; |]
         touches = new Event<Touch.Touch> ()
         deltaTime = new Event<single> ()
@@ -75,20 +77,23 @@ type QGLController =
                 45.f * (float32(Math.PI)/180.f), float32(size.Width) / float32(size.Height), 0.3f, 1000.f)
 
         this.mario <- Mario.actor view proj
+        this.curve <- Curve.actor view proj
 
     override this.Update () =
         Axon.trigger Mario.DeltaTimeEvent (single this.TimeSinceFirstResume)
+        Axon.trigger Curve.DeltaTimeEvent (single this.TimeSinceFirstResume)
         //this.deltaTime.Trigger (single this.TimeSinceFirstResume)
 
     member this.Draw (args : GLKViewDrawEventArgs) =
 
-        GL.ClearColor (0.f,0.f,1.f,1.f)
+        GL.ClearColor (0.1f,0.1f,0.1f,1.f)
         GL.Clear (ClearBufferMask.ColorBufferBit ||| ClearBufferMask.DepthBufferBit)
 
         GL.Enable EnableCap.DepthTest
         GL.Enable EnableCap.CullFace
 
         RenderBuilder.draw this.mario
+        RenderBuilder.draw this.curve
 
     member this.PushTouches (touches:NSSet) phase =
         let touches = touches.ToArray<UITouch> ()
@@ -123,17 +128,3 @@ type QGLController =
     override this.TouchesCancelled (touches, evt) =
         base.TouchesCancelled (touches, evt)
         this.PushTouches touches Touch.Cancelled
-
-//    member this.LoadActors () =
-//        let watch name position =
-//            let format = name + "/%s"
-//            let name = Printf.StringFormat<string -> string> format
-//            Asset.observe (sprintf name "names.list")
-//            |> Observable.add (fun data ->
-//                let names = Text.Encoding.ASCII.GetString data
-//                let names = names.Split ([|Environment.NewLine|], StringSplitOptions.None)
-//                let meshes = Array.fold (fun meshes mesh -> (new Shape.Mesh (sprintf name mesh)) :: meshes) [] names
-//                let actor = {meshes = meshes; offset = position}
-//                this.actors <- Map.add (sprintf name "actor") actor this.actors)
-//        watch "Link" (Vector3(3.f,0.f,0.f))
-//        watch "Mario" (Vector3(-3.f,0.f,0.f))

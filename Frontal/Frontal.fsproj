@@ -145,6 +145,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="WebFront.fs" />
+    <Compile Include="Curve.fs" />
     <Compile Include="Mario.fs" />
     <Compile Include="QGLController.fs" />
     <Compile Include="AppDelegate.fs" />

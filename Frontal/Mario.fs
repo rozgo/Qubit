@@ -49,10 +49,7 @@ let actor view proj =
     let model = animation |> Observable.property Matrix4.Identity
 
     model.Observable
-    |> Observable.add (printfn "%A")
-
-    model.Observable
-    |> Observable.add (printfn "%A")
+    |> Observable.add (fun _ -> ())
 
     let parts = ["Mario/FitMario_BodyB"; "Mario/FitMario_BodyA"; "Mario/FitMario_EyeDmg"; "Mario/FitMario_Kage"]
 
