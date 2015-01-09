@@ -60,5 +60,14 @@
     <Reference Include="FsPickler">
       <HintPath>..\Libs\FsPickler.dll</HintPath>
     </Reference>
+    <Reference Include="FsPickler.Json">
+      <HintPath>..\Libs\FsPickler.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.7\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>
