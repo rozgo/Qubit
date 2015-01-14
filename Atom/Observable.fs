@@ -89,13 +89,17 @@ type RemoteObservable<'T> (channel) =
 type RemoteObserver<'T> (observable:IObservable<'T>, channel) =
 
     let mutable subscribed = None
+    let mutable cache = None
 
-    let onNext (v) = Axon.trigger (channel + ":OnNext") v
+    let onNext (v) = 
+      cache <- Some v
+      Axon.trigger (channel + ":OnNext") v
     let onCompleted () = Axon.trigger (channel + ":OnCompleted") ()
     let onError (err) = Axon.trigger (channel + ":OnError") (err.ToString ())
     let onSubscribed (key) =
         if subscribed = None then
             subscribed <- Some (observable.Subscribe (onNext, onError, onCompleted))
+        Option.iter (fun v -> onNext v) cache
     let onDisposed (key) = ()
 
     let disposables = [

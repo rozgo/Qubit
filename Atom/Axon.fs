@@ -2,6 +2,7 @@
 
 open System
 open System.Collections.Generic
+open Comm
 
 module private __ =
 
@@ -19,10 +20,16 @@ module private __ =
             axons.[axon] <- observable
             observable
 
+    let forwarder<'MsgName when 'MsgName : equality> (path:'MsgName) msg =
+        (get<'MsgName,Message> path).Trigger msg
+    
 open __
+
+let mutable (Comm:IAxonComm) = DummyAxonComm () :> IAxonComm
 
 let observe<'MsgName,'MsgType when 'MsgName : equality> path =
     (get<'MsgName,'MsgType> path).Publish
 
 let trigger<'MsgName,'MsgType when 'MsgName : equality> path msg =
+    Comm.Forward<'MsgName,'MsgType> forwarder path msg
     (get<'MsgName,'MsgType> path).Trigger msg
