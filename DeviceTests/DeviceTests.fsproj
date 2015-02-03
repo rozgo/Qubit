@@ -52,7 +52,7 @@
     <MtouchDebug>true</MtouchDebug>
     <PlatformTarget>
     </PlatformTarget>
-    <MtouchArch>ARMv7, ARM64</MtouchArch>
+    <MtouchArch>ARM64</MtouchArch>
     <CodesignKey>iPhone Developer</CodesignKey>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <MtouchSdkVersion>8.1</MtouchSdkVersion>

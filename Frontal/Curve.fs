@@ -61,7 +61,7 @@ let actor view proj =
         |> Observable.map (fun dt -> float dt)
 
     let white =
-        Observable.repeatCount Vector4.One 4
+        Observable.repeatCount 4 Vector4.One
         |> Observable.fold (fun s c -> c :: s) []
         |> Observable.map Array.ofList
 
@@ -94,7 +94,6 @@ let actor view proj =
 
         let! b = shape curve
         return! draw curve
-
 
         }
 

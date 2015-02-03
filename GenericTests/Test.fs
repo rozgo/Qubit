@@ -139,3 +139,12 @@ type Test() =
 
 
         Thread.Sleep 3000
+
+    [<Test>]
+    member x.``try catch`` () =
+
+        try
+            printfn "will fail now"
+            failwith "fail now!!"
+        with
+            |e -> printfn "%A" e
