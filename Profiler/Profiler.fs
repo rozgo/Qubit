@@ -88,6 +88,7 @@ let private msg = new System.Text.StringBuilder ()
 let tick deltaTime =
     time <- time + deltaTime
     frame <- frame + 1
+    System.Diagnostics.Debug.Assert ((depth = 0))
     depth <- 0
     if time > 2. then
         time <- time - 2.
