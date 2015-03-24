@@ -30,6 +30,6 @@ type Builder () =
     member x.Bind (s, f) = bind f s
     member x.Combine (a, b) = combine a b
     member x.Delay f = f ()
-    member x.Zero () = x.Return (fun f -> f ())
+    member x.Zero () = empty
     member x.For (sequence:seq<_>, body) =
-        Seq.fold (fun a b -> combine a (body b)) (x.Zero ()) sequence
+        Seq.fold (fun a b -> combine a (body b)) empty sequence

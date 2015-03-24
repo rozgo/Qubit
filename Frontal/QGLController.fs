@@ -80,11 +80,16 @@ type QGLController =
         this.curve <- Curve.actor view proj
 
     override this.Update () =
+        Profiler.tick this.TimeSinceLastUpdate
+        use p = Profiler.sample "update"
         Axon.trigger Mario.DeltaTimeEvent (single this.TimeSinceFirstResume)
         Axon.trigger Curve.DeltaTimeEvent (single this.TimeSinceFirstResume)
         //this.deltaTime.Trigger (single this.TimeSinceFirstResume)
 
     member this.Draw (args : GLKViewDrawEventArgs) =
+        use p = Profiler.sample "render"
+
+        Threading.Thread.Sleep 8
 
         GL.ClearColor (0.1f,0.1f,0.1f,1.f)
         GL.Clear (ClearBufferMask.ColorBufferBit ||| ClearBufferMask.DepthBufferBit)

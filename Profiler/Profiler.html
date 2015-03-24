@@ -1,0 +1,115 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>BoW Profiler</title>
+
+  <script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+  <script src="http://code.highcharts.com/highcharts.js"></script>
+  <script src="http://code.highcharts.com/modules/exporting.js"></script>
+
+</head>
+
+<body>
+
+  <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+
+  <script language="javascript" type="text/javascript">
+
+  	var createChart = function (series) { 
+	  	var chart = new Highcharts.Chart({
+	        chart: {
+	        	renderTo: 'container',
+	            type: 'area'
+	        },
+	        title: {
+	            text: 'BoW Remote Profiler'
+	        },
+	        subtitle: {
+	            text: 'in realtime'
+	        },
+	        xAxis: {
+	            //categories: ['1750', '1800', '1850', '1900', '1950', '1999', '2050'],
+	            tickmarkPlacement: 'on',
+	            title: {
+	                text: 'Frames'
+	            }
+	        },
+	        yAxis: {
+	            title: {
+	                text: 'Milliseconds'
+	            },
+	            labels: {
+	                formatter: function () {
+	                    return this.value;
+	                }
+	            }
+	        },
+	        tooltip: {
+	            shared: true,
+	            valueSuffix: ' ms'
+	        },
+	        plotOptions: {
+	            area: {
+	                stacking: 'normal',
+	                lineColor: '#666666',
+	                lineWidth: 1,
+	                marker: {
+	                    lineWidth: 1,
+	                    lineColor: '#666666'
+	                }
+	            }
+	        },
+	        series: series
+	    });
+		return chart;
+	}
+	window.chart = createChart([{
+            name: 'Random data',
+            data: []
+        }]);
+
+	var ws = new WebSocket("ws://localhost:8888/stats");
+
+	ws.onopen = function(evt) {
+		console.log(evt);
+	};
+
+	ws.onclose = function(evt) {
+		console.log(evt);
+	};
+
+	// reference material
+	// http://www.highcharts.com/docs/working-with-data/live-data
+	// http://www.highcharts.com/demo/area-stacked
+
+	ws.onmessage = function(evt) {
+		var data = JSON.parse(evt.data);
+		if (window.chart.series.length != data.length) {
+			var mapped = data.map (function (item) {
+				return {
+					name: item.label,
+					data: []
+				}
+			});
+			window.chart = createChart(mapped);
+		}
+		else {
+			for (var i = 0; i < data.length; ++i) {
+				var shift = window.chart.series[i].data.length > 20;
+			    window.chart.series[i].addPoint([data[i].frame, data[i].duration], false, shift);
+			}
+		}
+		//console.log(mapped);
+		//console.log(data);
+		chart.redraw();
+	};
+
+	ws.onerror = function(evt) {
+		console.log(evt);
+	};
+
+  </script>
+</body>
+</html>

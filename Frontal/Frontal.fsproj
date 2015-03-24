@@ -66,6 +66,7 @@
     <MtouchUseSGen>true</MtouchUseSGen>
     <Optimize>false</Optimize>
     <Tailcalls>false</Tailcalls>
+    <MtouchUseRefCounting>true</MtouchUseRefCounting>
     <MtouchLink>None</MtouchLink>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
@@ -170,6 +171,10 @@
     <ProjectReference Include="..\Signal\Signal.fsproj">
       <Project>{79DEC74E-FD46-43A2-ABE5-E796293DCD2C}</Project>
       <Name>Signal</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Profiler\Profiler.fsproj">
+      <Project>{0AB7201F-2227-4CBF-B7C6-D04A864A89B8}</Project>
+      <Name>Profiler</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

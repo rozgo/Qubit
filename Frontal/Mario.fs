@@ -26,6 +26,8 @@ let program = RenderBuilder.State (fun interlude ->
     shader.Unbind ())
 
 let shape (mesh:Shape.Mesh) = RenderBuilder.State (fun interlude ->
+    use p = Profiler.sample "Mario.shape"
+    Threading.Thread.Sleep 4
     shader.BindBuffers mesh.VBOs
     mesh.BindBuffers ()
     interlude ()

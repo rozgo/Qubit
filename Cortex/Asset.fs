@@ -10,7 +10,7 @@ open Atom
 
 module private __ =
 
-//    let baseUrl = "http://192.168.4.110:8080/"
+//    let baseUrl = "http://192.168.3.156:8080/"
     let baseUrl = "http://localhost:8080/"
 
 open __
@@ -45,7 +45,7 @@ let observe asset : IEvent<byte array> =
 
 let watching = async {
     let ws = new WebSocket ("ws://localhost:8081/asset")
-//    let ws = new WebSocket ("ws://192.168.4.110:8081/asset")
+//    let ws = new WebSocket ("ws://192.168.3.156:8081/asset")
     ws.OnMessage
     |> Observable.add (fun (msg) ->
         Axon.trigger msg.Data ())
