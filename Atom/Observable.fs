@@ -4,6 +4,8 @@ open System
 open System.Collections.Generic
 open FSharp.Control.Reactive
 open System.Reactive.Disposables
+open Nessos.FsPickler
+open Nessos.FsPickler.Combinators
 
 type Property<'T> (observable:IObservable<'T>, initial) =
 
@@ -44,6 +46,7 @@ type Property<'T> (observable:IObservable<'T>, initial) =
             | Some disposable -> disposable.Dispose ()
             | _ -> ()
 
+[<CustomPickler>]
 type RemoteObservable<'T> (channel) =
 
     let mutable key = 0
@@ -81,16 +84,22 @@ type RemoteObservable<'T> (channel) =
             List.iter (fun (obs:IDisposable) -> obs.Dispose ()) disposables
             observers <- Map.empty
 
+    member __.channel = channel
+
 type RemoteObserver<'T> (observable:IObservable<'T>, channel) =
 
     let mutable subscribed = None
+    let mutable cache = None
 
-    let onNext (v) = Axon.trigger (channel + ":OnNext") v
+    let onNext (v) = 
+      cache <- Some v
+      Axon.trigger (channel + ":OnNext") v
     let onCompleted () = Axon.trigger (channel + ":OnCompleted") ()
     let onError (err) = Axon.trigger (channel + ":OnError") (err.ToString ())
     let onSubscribed (key) =
         if subscribed = None then
             subscribed <- Some (observable.Subscribe (onNext, onError, onCompleted))
+        Option.iter (fun v -> onNext v) cache
     let onDisposed (key) = ()
 
     let disposables = [
@@ -130,7 +139,7 @@ module Observable =
     let property<'T> initial obs =
         new Property<'T> (obs, initial)
 
-    let remote channel = (get channel).Observable
+    let remote channel = (get channel)
 
 module Observer =
 
@@ -155,3 +164,14 @@ module Observer =
     let remote channel observable =
         get observable channel |> ignore
 
+(* RemoteObservable Serialization *)
+type RemoteObservable with
+    static member CreatePickler (resolver : IPicklerResolver) = 
+        let channelSolver = resolver.Resolve<string> ()
+        let writer (w : WriteState) (tag : string) (c : RemoteObservable<'T>) =
+            channelSolver.Write w tag c.channel
+        let reader (r : ReadState) (tag : string) =
+            let channel = channelSolver.Read r tag
+            Observable.remote channel
+        
+        Pickler.FromPrimitives(reader, writer)

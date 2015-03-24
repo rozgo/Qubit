@@ -35,9 +35,9 @@ type RemoteObservableTests () =
 
         let obs1 = Observable.remote "range"
 
-        obs1
+        obs1.Observable
         |> Observable.add (printfn "%i")
 
-        obs1
+        obs1.Observable
         |> Observable.add (printfn "%i")
 
